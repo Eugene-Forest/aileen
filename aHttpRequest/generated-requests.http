@@ -1,0 +1,12 @@
+### HttpClinet 用例
+POST http://localhost:8080/client/post
+Content-Type: application/json
+
+{
+  "headers": {
+    "path": "get",
+    "method": "get"
+  },
+  "requestType": "get",
+  "url": "http://localhost:8089//analyse/get"
+}
