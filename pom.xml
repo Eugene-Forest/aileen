@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.aileen</groupId>
+    <artifactId>Aileen</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>Aileen</name>
+    <description>Aileen</description>
+    <modules>
+        <module>AuthMod</module>
+        <module>RedisMod</module>
+        <module>JavaKitMod</module>
+        <module>HttpClientMod</module>
+        <module>DataSourceMod</module>
+        <module>CommonMod</module>
+    </modules>
+    <!-- 根模块打包类型必须为pom -->
+    <packaging>pom</packaging>
+    <url/>
+    <licenses>
+        <license/>
+    </licenses>
+    <developers>
+        <developer/>
+    </developers>
+    <scm>
+        <connection/>
+        <developerConnection/>
+        <tag/>
+        <url/>
+    </scm>
+    <properties>
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <spring-boot.version>2.7.18</spring-boot.version>
+        <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
+        <spring-cloud.version>2021.0.5.0</spring-cloud.version>
+        <jwt.version>4.4.0</jwt.version>
+        <lombok.version>1.18.30</lombok.version>
+        <connecter-mysql.version>8.0.33</connecter-mysql.version>
+        <spring-mybatis.version>2.2.2</spring-mybatis.version>
+        <dynamic-datasource.version>4.3.0</dynamic-datasource.version>
+        <seata.verison>2.0.0</seata.verison>
+    </properties>
+    <dependencies>
+
+    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

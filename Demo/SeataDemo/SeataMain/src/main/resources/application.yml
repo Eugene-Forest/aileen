@@ -1,0 +1,62 @@
+# 应用服务 WEB 访问端口
+server:
+  port: 8081
+
+# profiles.active 指定其他项目或者自身项目下的 yml 配置
+spring:
+  application:
+    name: tutor_datasource  # 应用名
+  profiles:
+    active: private
+  datasource:
+    dynamic:
+      primary: order-ds # 设置默认的数据源或者数据源组，默认值即为 master
+      datasource:
+        #订单
+        order-ds:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://localhost:3306/Tutor_Ali?serverTimezone=UTC&characterEncoding=utf8
+          username: tutor
+          password:
+        #账户
+        account-ds:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://localhost:3306/Tutor_Ali?serverTimezone=UTC&characterEncoding=utf8
+          username: tutor
+          password:
+        #产品
+        product-ds:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://localhost:3306/Tutor_Ali?serverTimezone=UTC&characterEncoding=utf8
+          username: tutor
+          password:
+      seata: true
+# Seata 配置项，对应 SeataProperties 类
+seata:
+  application-id: ${spring.application.name} # Seata 应用编号，默认为 ${spring.application.name}
+  tx-service-group: tutor_datasource_group # Seata 事务组编号，用于 TC 集群名
+  # 服务配置项，对应 ServiceProperties 类
+  service:
+    # 虚拟组和分组的映射
+    vgroup-mapping:
+      tutor_datasource_group: default
+    # 分组和 Seata 服务的映射
+    grouplist:
+      default: 127.0.0.1:8091
+#seata:
+#  application-id: ${spring.application.name}
+##  事务分组配置（在v1:5之后默认值为 default_tx_group）:
+#  tx-service-group: ${spring.application.name}-group
+##  指定事务分组至集群映射关系（等号右侧的集群名需要与Seata-server注册到Nacos的cluster保持一致）
+#  service:
+#    vgroup-mapping:
+#      tutor-datasource-group: default
+#  # 使用nacos作为注册中心
+#  registry:
+#    type: nacos
+#    nacos:
+#      server-addr: 127.0.0.1:8848
+#      #  Seata服务名（应与seata-server实际注册的服务名一致）
+#      application: seata-server
+#      # Seata分组名（应与seata-server实际注册的分组名一致）
+#      group: SEATA_GROUP

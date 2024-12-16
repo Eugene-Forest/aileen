@@ -1,0 +1,29 @@
+server:
+  port: 8088
+spring:
+  application:
+    name: TC-CBD
+  profiles:
+    active: private
+
+#  cloud:
+#    nacos:
+#      discovery:
+#        enabled: true
+#        server-addr: localhost:8848
+#        username: nacos
+#        password:
+#        namespace:
+#      config:
+#        server-addr: localhost:8848
+#        username: nacos
+#        password:
+#        encode: UTF-8
+#        file-extension: yaml
+#        refresh-enabled: true
+#        namespace:
+#  #        group: DEFAULT_GROUP
+#  #        name: CBD-application.yaml
+#  config:
+#    import:
+#      - nacos:CBD-application.yaml?refreshEnabled=true

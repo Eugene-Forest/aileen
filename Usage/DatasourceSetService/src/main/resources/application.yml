@@ -1,0 +1,22 @@
+
+
+# 应用服务 WEB 访问端口
+server:
+  port: 9091
+
+# profiles.active 指定其他项目或者自身项目下的 yml 配置
+spring:
+  application:
+    name: tutor-datasource-service  # 应用名
+  profiles:
+    active: private
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/Tutor_Ali?serverTimezone=UTC&characterEncoding=utf8
+#    username: tutor
+#    password: password
+
+logging:
+  level:
+    org.tutor: debug
+
