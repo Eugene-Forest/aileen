@@ -18,4 +18,5 @@ public class SimpleHttpProxyDto {
     private String requestType;
     private Map<String, String> headers;
     private String body;
+    private boolean isEncode = true;
 }

@@ -9,7 +9,6 @@ import org.aileen.mod.auth.entity.WebResult;
 import org.aileen.mod.auth.units.CryptoUnits;
 import org.springframework.stereotype.Service;
 
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,16 +24,25 @@ public class ClientDemoServiceImpl implements ClientDemoService {
 
     @Override
     public WebResult proxyHttp(SimpleHttpProxyDto dto) {
-        if(dto.getRequestType().equals("get")){
+        if (dto.getRequestType().equals("get")) {
             try {
-                String res = HttpClientUtils.get(dto.getUrl());
-                log.info("请求原文：");
-                log.info(res);
-                String result = CryptoUnits.defaultDecrypt(res);
-                log.info("解密：");
-                log.info(result);
-                return WebResult.success(result);
-            }catch (Exception e){
+                if (dto.isEncode()) {
+
+                    String res = HttpClientUtils.get(dto.getUrl());
+                    log.info("请求原文：");
+                    log.info(res);
+                    String result = CryptoUnits.defaultDecrypt(res);
+                    log.info("解密：");
+                    log.info(result);
+                    return WebResult.success(result);
+                } else {
+
+                    String res = HttpClientUtils.get(dto.getUrl());
+                    log.info("请求原文：");
+                    log.info(res);
+                    return WebResult.success(res);
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
