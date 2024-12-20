@@ -40,6 +40,11 @@
             <artifactId>AuthMod</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.aileen</groupId>
+            <artifactId>HttpClientMod</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

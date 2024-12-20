@@ -1,8 +1,8 @@
 package org.aileen.demo.service;
 
 
-import org.aileen.demo.entity.SimpleHttpProxyDto;
 import org.aileen.mod.auth.entity.WebResult;
+import org.aileen.mod.httpclient.dto.SimpleHttpProxyDto;
 
 /**
  * @author Eugene-Forest

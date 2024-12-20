@@ -1,7 +1,7 @@
 package org.aileen.demo.units;
 
 import com.alibaba.fastjson.JSON;
-import org.aileen.demo.entity.SimpleHttpProxyDto;
+import org.aileen.mod.httpclient.dto.SimpleHttpProxyDto;
 
 import java.util.HashMap;
 import java.util.Map;

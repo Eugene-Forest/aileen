@@ -12,6 +12,8 @@
     <modules>
         <module>CloudDemo</module>
         <module>ClientDemo</module>
+        <module>MybatisDemo</module>
+        <module>DDD-Demo</module>
     </modules>
 
     <properties>

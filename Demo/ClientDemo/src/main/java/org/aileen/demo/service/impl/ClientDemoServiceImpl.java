@@ -2,11 +2,11 @@ package org.aileen.demo.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
-import org.aileen.demo.entity.SimpleHttpProxyDto;
 import org.aileen.demo.service.ClientDemoService;
-import org.aileen.demo.units.HttpClientUtils;
 import org.aileen.mod.auth.entity.WebResult;
 import org.aileen.mod.auth.units.CryptoUnits;
+import org.aileen.mod.httpclient.dto.SimpleHttpProxyDto;
+import org.aileen.mod.httpclient.units.HttpClientUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

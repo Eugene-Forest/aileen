@@ -1,8 +1,8 @@
 package org.aileen.demo.controller;
 
-import org.aileen.demo.entity.SimpleHttpProxyDto;
 import org.aileen.demo.service.ClientDemoService;
 import org.aileen.mod.auth.entity.WebResult;
+import org.aileen.mod.httpclient.dto.SimpleHttpProxyDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -1,7 +1,7 @@
-package org.aileen.demo.units;
+package org.aileen.mod.httpclient.units;
 
-import lombok.extern.slf4j.Slf4j;
-import org.aileen.mod.auth.units.SignKeyUnits;
+import com.sun.org.slf4j.internal.Logger;
+import com.sun.org.slf4j.internal.LoggerFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -16,7 +16,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -25,8 +24,10 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
-@Slf4j
+
 public class HttpClientUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(HttpClientUtils.class);
 
     /**
      * 封装POST请求（Map入参）
@@ -66,7 +67,7 @@ public class HttpClientUtils {
         if (200 == statusCode) {
             result = EntityUtils.toString(response.getEntity());
         } else {
-            log.info("请求第三方接口出现错误，状态码为:{}", statusCode);
+            log.error("请求第三方接口出现错误，状态码为:{}", statusCode);
             return null;
         }
 //        6、释放资源
@@ -94,7 +95,7 @@ public class HttpClientUtils {
         httpPost.setHeader("Accept", "application/json");
         httpPost.setHeader("Content-Type", "application/json");
 
-        httpPost.setHeader("authorization", SignKeyUnits.defaultSignMessage(data));
+//        httpPost.setHeader("authorization", SignKeyUnits.defaultSignMessage(data));
 
 //        设置请求参数
         httpPost.setEntity(new StringEntity(data, StandardCharsets.UTF_8));
@@ -106,7 +107,7 @@ public class HttpClientUtils {
         if (200 == statusCode) {
             result = EntityUtils.toString(response.getEntity());
         } else {
-            log.info("请求第三方接口出现错误，状态码为:{}", statusCode);
+            log.error("请求第三方接口出现错误，状态码为:{}", statusCode);
             return null;
         }
 //        6、释放资源
@@ -138,7 +139,7 @@ public class HttpClientUtils {
         if (200 == statusCode) {
             result = EntityUtils.toString(response.getEntity());
         } else {
-            log.info("请求第三方接口出现错误，状态码为:{}", statusCode);
+            log.error("请求第三方接口出现错误，状态码为:{}", statusCode);
             return null;
         }
 //        6、释放资源
@@ -157,7 +158,6 @@ public class HttpClientUtils {
         httpGet.setConfig(requestConfig);
 
 
-
 //        4、发送Http请求
         HttpResponse response = httpClient.execute(httpGet);
 //        5、获取返回的内容
@@ -166,7 +166,7 @@ public class HttpClientUtils {
         if (200 == statusCode) {
             result = EntityUtils.toString(response.getEntity());
         } else {
-            log.info("请求第三方接口出现错误，状态码为:{}", statusCode);
+            log.error("请求第三方接口出现错误，状态码为:{}", statusCode);
             return null;
         }
 //        6、释放资源
