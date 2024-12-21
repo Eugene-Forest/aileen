@@ -24,7 +24,10 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
-
+/***
+ * httpClient工具类
+ * @deprecated 请使用OkHttpClient
+ */
 public class HttpClientUtils {
 
     private static final Logger log = LoggerFactory.getLogger(HttpClientUtils.class);
