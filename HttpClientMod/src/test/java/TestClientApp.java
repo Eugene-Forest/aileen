@@ -1,22 +1,15 @@
 import okhttp3.OkHttpClient;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
 import org.aileen.mod.httpclient.config.OkHttpConfig;
 import org.aileen.mod.httpclient.units.OkClientKit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
 
@@ -63,21 +56,20 @@ public class TestClientApp {
     }
 
     @Test
-    public void test() {
+    public void testSimpleGet() {
         try {
-            // Arrange
-            String expectedResponse = "Hello, World!";
-            mockWebServer.enqueue(new MockResponse().setBody(expectedResponse));
-
-            // Act
-            String actualResponse = okClientKit.get();
-
-            // Assert
+            // 使用 MockWebServer 模拟服务器响应
+            String expectedResponse = "{\"key\":\"value\"}";
+            mockWebServer.enqueue(new MockResponse()
+                    .setResponseCode(200)
+                    .setBody(expectedResponse));
+            // 构造请求 URL
+            String url = mockWebServer.url("/getMessage").toString();
+            // Kit 发送 GET 请求
+            String actualResponse = okClientKit.get(url);
+            // 判断结果
             assertEquals(expectedResponse, actualResponse);
 
-            // Verify the request was made to the correct URL
-            RecordedRequest request = mockWebServer.takeRequest();
-            assertEquals("/", request.getPath());
         } catch (Exception e) {
             log.info("test error", e);
             throw new RuntimeException(e);

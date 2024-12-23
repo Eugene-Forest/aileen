@@ -1,13 +1,12 @@
 package org.aileen.mod.httpclient.units;
 
-import okhttp3.Call;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 /**
  * OkHttp网络请求封装工具类
@@ -27,16 +26,37 @@ public class OkClientKit {
         this.okHttpClient = okHttpClient;
     }
 
-    public String get() {
-        Request request = new Request.Builder().url("http://www.baidu.com").build();
+    public String get(String url) {
+        try {
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
 
-        Call call = okHttpClient.newCall(request);
+            try (Response response = okHttpClient.newCall(request).execute()) {
+                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+                return response.body().string();
+            }
+        } catch (IOException e) {
+            log.error("请求第三方接口出现错误，错误信息为:{}", e.getMessage());
+            return null;
+        }
+    }
 
-        try(Response response = call.execute()){
-            assert response.body() != null;
-            return response.body().string();
-        }catch (Exception e){
-            log.error("请求异常", e);
+    public String post(String url, String json) {
+        try {
+            MediaType JSON = MediaType.get("application/json; charset=utf-8");
+            RequestBody body = RequestBody.create(json, JSON);
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(body)
+                    .build();
+
+            try (Response response = okHttpClient.newCall(request).execute()) {
+                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+                return response.body().string();
+            }
+        } catch (IOException e) {
+            log.error("请求第三方接口出现错误，错误信息为:{}", e.getMessage());
             return null;
         }
     }
