@@ -29,14 +29,23 @@ public class OkHttpConfig {
     @Value("${okhttp.writeTimeout}")
     private int writeTimeout;
 
+
+    public OkHttpConfig() {
+    }
+
+    public OkHttpConfig(int connectTimeout, int readTimeout, int writeTimeout) {
+        this.connectTimeout = connectTimeout;
+        this.readTimeout = readTimeout;
+        this.writeTimeout = writeTimeout;
+    }
+
     @Bean
     public OkHttpClient okHttpClient() {
-        log.debug("okhttp3.OkHttpClient init");
-        log.debug("connectTimeout:{},readTimeout:{},writeTimeout:{}", connectTimeout, readTimeout, writeTimeout);
+        log.debug("okHttpClient init; connectTimeout:{},readTimeout:{},writeTimeout:{}", connectTimeout, readTimeout, writeTimeout);
         return new OkHttpClient.Builder()
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
+                .connectTimeout(connectTimeout, TimeUnit.SECONDS)
+                .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
                 .build();
     }
 }

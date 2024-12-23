@@ -14,28 +14,22 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Eugene-Forest
  * {@code @date} 2024/12/16
  */
 @ExtendWith(MockitoExtension.class)
-@ContextConfiguration(classes = {OkHttpConfig.class})
-@TestPropertySource(locations = {"classpath:application.yml"})
 public class TestClientApp {
 
-//    @Autowired
-//    private OkHttpClient okHttpClient;
-
-//    @InjectMocks
-//    private OkClientKit okClientKit;
+    private OkClientKit okClientKit;
 
     private MockWebServer mockWebServer;
 
@@ -46,6 +40,11 @@ public class TestClientApp {
         try {
             mockWebServer = new MockWebServer();
             mockWebServer.start();
+            //初始化OkClientKit
+            OkHttpConfig okHttpConfig = new OkHttpConfig(10, 10, 10);
+            OkHttpClient okHttpClient = okHttpConfig.okHttpClient();
+            okClientKit = new OkClientKit(okHttpClient);
+            log.debug("setup finish");
         } catch (IOException e) {
             log.error("mockWebServer start error", e);
             throw new RuntimeException(e);
@@ -56,6 +55,7 @@ public class TestClientApp {
     public void tearDown() {
         try {
             mockWebServer.shutdown();
+            log.debug("tearDown finish");
         } catch (IOException e) {
             log.error("mockWebServer shutdown error", e);
             throw new RuntimeException(e);
@@ -64,24 +64,23 @@ public class TestClientApp {
 
     @Test
     public void test() {
-//        try {
-//            // Arrange
-//            String expectedResponse = "Hello, World!";
-//            mockWebServer.enqueue(new MockResponse().setBody(expectedResponse));
-//
-//
-//            // Act
-//            String actualResponse = okClientKit.get();
-//
-//            // Assert
-//            assertEquals(expectedResponse, actualResponse);
-//
-//            // Verify the request was made to the correct URL
-//            RecordedRequest request = mockWebServer.takeRequest();
-//            assertEquals("/", request.getPath());
-//        } catch (Exception e) {
-//            log.info("test error", e);
-//        }
-    }
+        try {
+            // Arrange
+            String expectedResponse = "Hello, World!";
+            mockWebServer.enqueue(new MockResponse().setBody(expectedResponse));
 
+            // Act
+            String actualResponse = okClientKit.get();
+
+            // Assert
+            assertEquals(expectedResponse, actualResponse);
+
+            // Verify the request was made to the correct URL
+            RecordedRequest request = mockWebServer.takeRequest();
+            assertEquals("/", request.getPath());
+        } catch (Exception e) {
+            log.info("test error", e);
+            throw new RuntimeException(e);
+        }
+    }
 }

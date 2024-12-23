@@ -20,13 +20,17 @@ public class OkClientKit {
 
     private static final Logger log = LoggerFactory.getLogger(OkClientKit.class);
 
+    private final OkHttpClient okHttpClient;
+
     @Autowired
-    private OkHttpClient client;
+    public OkClientKit(OkHttpClient okHttpClient) {
+        this.okHttpClient = okHttpClient;
+    }
 
     public String get() {
         Request request = new Request.Builder().url("http://www.baidu.com").build();
 
-        Call call = client.newCall(request);
+        Call call = okHttpClient.newCall(request);
 
         try(Response response = call.execute()){
             assert response.body() != null;
