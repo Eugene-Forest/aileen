@@ -1,4 +1,4 @@
-import okhttp3.OkHttpClient;
+import okhttp3.*;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.aileen.mod.httpclient.config.OkHttpConfig;
@@ -71,6 +71,28 @@ public class TestClientApp {
             assertEquals(expectedResponse, actualResponse);
 
         } catch (Exception e) {
+            log.info("test error", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testSimplePost() {
+        try {
+            // 使用 MockWebServer 模拟服务器响应
+            // 加入一个数据给模拟服务器响应队列
+            mockWebServer.enqueue(new MockResponse()
+                    .setResponseCode(133)
+                    .setBody("success"));
+            // 创建POST请求
+            MediaType JSON = MediaType.get("application/json; charset=utf-8");
+            String json = "{\"key\":\"value\"}";
+            String url = mockWebServer.url("/post").toString();
+            String message = okClientKit.post(url, json);
+            // 发送请求并获取响应
+            assertEquals("success", message);
+            log.info(message);
+        }catch (Exception e) {
             log.info("test error", e);
             throw new RuntimeException(e);
         }
