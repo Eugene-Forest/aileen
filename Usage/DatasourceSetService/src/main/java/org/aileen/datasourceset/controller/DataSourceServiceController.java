@@ -4,7 +4,7 @@ import org.aileen.datasourceset.dto.Account;
 import org.aileen.datasourceset.dto.DataSourceDto;
 import org.aileen.datasourceset.service.DataSourceService;
 import org.aileen.mod.auth.anno.EncryptRequest;
-import org.aileen.mod.auth.entity.WebResult;
+import org.aileen.mod.kit.dto.WebResult;
 import org.aileen.mod.auth.enums.RequestEncryptType;
 import org.aileen.mod.auth.units.CryptoUnits;
 import org.aileen.mod.auth.units.SignKeyUnits;

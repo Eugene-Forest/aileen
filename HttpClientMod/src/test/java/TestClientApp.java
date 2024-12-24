@@ -66,7 +66,7 @@ public class TestClientApp {
             // 构造请求 URL
             String url = mockWebServer.url("/getMessage").toString();
             // Kit 发送 GET 请求
-            String actualResponse = okClientKit.get(url);
+            String actualResponse = okClientKit.get(url).getData();
             // 判断结果
             assertEquals(expectedResponse, actualResponse);
 
@@ -88,7 +88,7 @@ public class TestClientApp {
             MediaType JSON = MediaType.get("application/json; charset=utf-8");
             String json = "{\"key\":\"value\"}";
             String url = mockWebServer.url("/post").toString();
-            String message = okClientKit.post(url, json);
+            String message = okClientKit.post(url, json).getData();
             // 发送请求并获取响应
             assertEquals("success", message);
             log.info(message);

@@ -1,4 +1,4 @@
-package org.aileen.mod.auth.entity;
+package org.aileen.mod.kit.dto;
 
 import java.io.Serializable;
 
