@@ -17,6 +17,8 @@ logging:
 
 okhttp:
   connectTimeout: 5
+  readTimeout: 5
+  writeTimeout: 5
 
 server:
   port: 8888

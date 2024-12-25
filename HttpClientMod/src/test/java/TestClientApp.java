@@ -69,7 +69,6 @@ public class TestClientApp {
             String actualResponse = okClientKit.get(url).getData();
             // 判断结果
             assertEquals(expectedResponse, actualResponse);
-
         } catch (Exception e) {
             log.info("test error", e);
             throw new RuntimeException(e);

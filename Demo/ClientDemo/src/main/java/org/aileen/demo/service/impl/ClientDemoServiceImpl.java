@@ -3,13 +3,13 @@ package org.aileen.demo.service.impl;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.aileen.demo.service.ClientDemoService;
-import org.aileen.mod.kit.dto.WebResult;
 import org.aileen.mod.auth.units.CryptoUnits;
 import org.aileen.mod.httpclient.dto.SimpleHttpProxyDto;
-import org.aileen.mod.httpclient.units.HttpClientUtils;
+import org.aileen.mod.httpclient.units.OkClientKit;
+import org.aileen.mod.kit.dto.WebResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +21,8 @@ import java.util.Map;
 @Slf4j
 public class ClientDemoServiceImpl implements ClientDemoService {
 
+    @Autowired
+    private OkClientKit okClientKit;
 
     @Override
     public WebResult proxyHttp(SimpleHttpProxyDto dto) {
@@ -28,7 +30,7 @@ public class ClientDemoServiceImpl implements ClientDemoService {
             try {
                 if (dto.isEncode()) {
 
-                    String res = HttpClientUtils.get(dto.getUrl());
+                    String res = okClientKit.get(dto.getUrl()).getData();
                     log.info("请求原文：");
                     log.info(res);
                     String result = CryptoUnits.defaultDecrypt(res);
@@ -37,7 +39,7 @@ public class ClientDemoServiceImpl implements ClientDemoService {
                     return WebResult.success(result);
                 } else {
 
-                    String res = HttpClientUtils.get(dto.getUrl());
+                    String res = okClientKit.get(dto.getUrl()).getData();
                     log.info("请求原文：");
                     log.info(res);
                     return WebResult.success(res);
@@ -52,16 +54,12 @@ public class ClientDemoServiceImpl implements ClientDemoService {
 
     @Override
     public WebResult proxyLogin() {
-        try {
-            SimpleHttpProxyDto dto = new SimpleHttpProxyDto();
-            dto.setUrl("http://localhost:9091/datasource/login");
-            Map<String, String> m = new HashMap<>();
-            m.put("name", "admin");
-            m.put("password", "admin");
-            HttpClientUtils.post(dto.getUrl(), JSON.toJSONString(m));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        SimpleHttpProxyDto dto = new SimpleHttpProxyDto();
+        dto.setUrl("http://localhost:9091/datasource/login");
+        Map<String, String> m = new HashMap<>();
+        m.put("name", "admin");
+        m.put("password", "admin");
+        okClientKit.post(dto.getUrl(), JSON.toJSONString(m));
         return null;
     }
 }
