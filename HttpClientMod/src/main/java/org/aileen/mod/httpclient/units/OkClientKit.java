@@ -1,6 +1,8 @@
 package org.aileen.mod.httpclient.units;
 
 import okhttp3.*;
+import org.aileen.mod.httpclient.dto.SimpleHttpProxyDto;
+import org.aileen.mod.httpclient.enums.SimpleHttpProxyType;
 import org.aileen.mod.kit.dto.WebResult;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * OkHttp网络请求封装工具类
@@ -97,6 +100,16 @@ public class OkClientKit {
         } catch (IOException e) {
             log.error("请求第三方接口出现错误，错误信息为:{}", e.getMessage());
             return WebResult.error();
+        }
+    }
+
+    public WebResult<String> simpleHttpProxy(@NotNull SimpleHttpProxyDto dto) {
+        if(Objects.equals(dto.getRequestType(), SimpleHttpProxyType.GET.getValue())){
+            //get
+            return get(dto.getUrl(), dto.getHeaders());
+        }else{
+            //post
+            return post(dto.getUrl(), dto.getBody(), dto.getHeaders());
         }
     }
 }

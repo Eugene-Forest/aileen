@@ -13,4 +13,8 @@ public interface ClientDemoService {
     WebResult proxyHttp(SimpleHttpProxyDto dto);
 
     WebResult proxyLogin();
+
+    WebResult proxyAnalyseGet();
+
+    WebResult proxyAnalysePost();
 }

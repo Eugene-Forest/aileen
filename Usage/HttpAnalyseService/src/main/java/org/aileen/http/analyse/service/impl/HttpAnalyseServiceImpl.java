@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 /**
  * @author Eugene-Forest
  * {@code @date} 2024/12/16
@@ -15,9 +17,10 @@ public class HttpAnalyseServiceImpl implements HttpAnalyseService {
     private static final Logger log = LoggerFactory.getLogger(HttpAnalyseServiceImpl.class);
 
     @Override
-    public Object analyseGetRequest(String[] args) {
+    public Object analyseGetRequest(Map<String,String> args) {
         log.info("analyseGetRequest");
-        return args;
+        args.forEach((k,v)->log.info("param: " + k + "=" + v));
+        return args.size();
     }
 
     @Override

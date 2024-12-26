@@ -26,20 +26,9 @@ public class RequestInterceptor implements HandlerInterceptor {
         // 在请求处理之前执行，允许您在请求被传递给控制器之前进行一些预处理操作，
         // 比如鉴权、日志记录等。如果返回true，则继续执行请求处理链；如果返回false，则中断请求处理。
         String servletPath = request.getServletPath();
-        Map<String, String[]> parameterMap = request.getParameterMap();
         log.warn("拦截处理URL:" + request.getRequestURL().toString());
-        if (handler instanceof HandlerMethod) {
-            HandlerMethod handlerMethod = (HandlerMethod) handler;
-//            NoToken noToken = AnnoUnits.getAnno(handlerMethod, NoToken.class);
-//            if(noToken == null){
-//
-//            } else{
-//                log.debug("不需要签名校验[{}]请求。", handlerMethod.getMethod().getName());
-//            }
-            //需要签名校验
-            log.debug("校验[{}]请求。", handlerMethod.getMethod().getName());
-
-        }
+        log.warn("token: " + request.getHeader("token"));
+        log.warn("Auth: " + request.getHeader("Authorization"));
         return true; // 返回true继续执行，返回false中断执行
     }
 

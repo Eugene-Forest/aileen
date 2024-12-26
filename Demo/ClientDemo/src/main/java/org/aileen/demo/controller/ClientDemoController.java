@@ -4,10 +4,7 @@ import org.aileen.demo.service.ClientDemoService;
 import org.aileen.mod.kit.dto.WebResult;
 import org.aileen.mod.httpclient.dto.SimpleHttpProxyDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Eugene-Forest
@@ -28,5 +25,15 @@ public class ClientDemoController {
     @PostMapping("/login")
     public WebResult proxyLogin() {
         return clientDemoService.proxyLogin();
+    }
+
+    @GetMapping("/analyseGet")
+    public WebResult proxyAnalyseGet() {
+        return clientDemoService.proxyAnalyseGet();
+    }
+
+    @PostMapping("/analysePost")
+    public WebResult proxyAnalysePost() {
+        return clientDemoService.proxyAnalysePost();
     }
 }

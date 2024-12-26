@@ -3,6 +3,7 @@ package org.aileen.demo.service.impl;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.aileen.demo.service.ClientDemoService;
+import org.aileen.demo.units.UsageUnits;
 import org.aileen.mod.auth.units.CryptoUnits;
 import org.aileen.mod.httpclient.dto.SimpleHttpProxyDto;
 import org.aileen.mod.httpclient.units.OkClientKit;
@@ -61,5 +62,15 @@ public class ClientDemoServiceImpl implements ClientDemoService {
         m.put("password", "admin");
         okClientKit.post(dto.getUrl(), JSON.toJSONString(m));
         return null;
+    }
+
+    @Override
+    public WebResult proxyAnalyseGet() {
+        return okClientKit.simpleHttpProxy(UsageUnits.getAnalyseGetRequestDto());
+    }
+
+    @Override
+    public WebResult proxyAnalysePost() {
+        return okClientKit.simpleHttpProxy(UsageUnits.getAnalysePostRequestDto());
     }
 }

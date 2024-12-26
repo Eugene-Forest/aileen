@@ -10,3 +10,21 @@ Content-Type: application/json
   "requestType": "get",
   "url": "http://localhost:8089//analyse/get"
 }
+
+### ClientDemo Analyse Get
+GET http://localhost:8888/client/analyseGet
+
+
+### ClientDemo Analyse Post
+POST http://localhost:8888/client/analysePost
+
+### Analyse Get
+GET http://localhost:8089/analyse/get?name=get
+
+### Analyse Post
+POST http://localhost:8089/analyse/post
+Content-Type: application/json
+
+{
+  "name": "post"
+}

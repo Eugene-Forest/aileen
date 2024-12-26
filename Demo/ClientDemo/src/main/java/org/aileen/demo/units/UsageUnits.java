@@ -13,15 +13,17 @@ import java.util.Map;
 public class UsageUnits {
 
 
-    private static final String HttpAnalyseBaseUrl = "http://localhost:8089/";
+    private static final String HttpAnalyseBaseUrl = "http://localhost:8089";
 
     public static SimpleHttpProxyDto getAnalyseGetRequestDto() {
         SimpleHttpProxyDto dto = new SimpleHttpProxyDto();
-        dto.setUrl(HttpAnalyseBaseUrl + "/analyse/get");
+        dto.setUrl(HttpAnalyseBaseUrl + "/analyse/get?id=112233");
         dto.setRequestType("get");
         Map map = new HashMap();
         map.put("method", "get");
         map.put("path", "get");
+        map.put("token", "token12345");
+        map.put("Authorization","Authorization12345");
         dto.setHeaders(map);
         dto.setEncode(false);
         return dto;
@@ -30,8 +32,14 @@ public class UsageUnits {
     public static SimpleHttpProxyDto getAnalysePostRequestDto() {
         SimpleHttpProxyDto dto = new SimpleHttpProxyDto();
         dto.setUrl(HttpAnalyseBaseUrl + "/analyse/post");
+        Map map = new HashMap();
+        map.put("method", "get");
+        map.put("path", "get");
+        map.put("token", "token12345");
+        map.put("Authorization","Authorization12345");
         dto.setRequestType("post");
         dto.setBody("hello world!");
+        dto.setHeaders(map);
         dto.setEncode(false);
         return dto;
     }
