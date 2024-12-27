@@ -11,6 +11,7 @@
     <modules>
         <module>DatasourceSetService</module>
         <module>HttpAnalyseService</module>
+        <module>LCM3v81</module>
     </modules>
 
     <properties>
