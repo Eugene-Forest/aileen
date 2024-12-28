@@ -67,14 +67,15 @@ public class RequestInterceptor implements HandlerInterceptor {
                         throw new RuntimeException("验签失败");
                     }
                 } else {
-                    String password = redisUtil.get("password");
-                    if (password == null) {
-                        //throw message
-                        return false;
-                    } else {
-                        //TODO: 需要校验token
-                        return true;
-                    }
+                    return true;
+//                    String password = redisUtil.get("password");
+//                    if (password == null) {
+//                        //throw message
+//                        return false;
+//                    } else {
+//                        //TODO: 需要校验token
+//                        return true;
+//                    }
                 }
             }
         }

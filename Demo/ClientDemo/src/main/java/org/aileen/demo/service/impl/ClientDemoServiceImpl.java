@@ -1,18 +1,13 @@
 package org.aileen.demo.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.aileen.demo.service.ClientDemoService;
 import org.aileen.demo.units.UsageUnits;
-import org.aileen.mod.auth.units.CryptoUnits;
 import org.aileen.mod.httpclient.dto.SimpleHttpProxyDto;
 import org.aileen.mod.httpclient.units.OkClientKit;
 import org.aileen.mod.kit.dto.WebResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Eugene-Forest
@@ -27,40 +22,40 @@ public class ClientDemoServiceImpl implements ClientDemoService {
 
     @Override
     public WebResult proxyHttp(SimpleHttpProxyDto dto) {
-        if (dto.getRequestType().equals("get")) {
-            try {
-                if (dto.isEncode()) {
-
-                    String res = okClientKit.get(dto.getUrl()).getData();
-                    log.info("请求原文：");
-                    log.info(res);
-                    String result = CryptoUnits.defaultDecrypt(res);
-                    log.info("解密：");
-                    log.info(result);
-                    return WebResult.success(result);
-                } else {
-
-                    String res = okClientKit.get(dto.getUrl()).getData();
-                    log.info("请求原文：");
-                    log.info(res);
-                    return WebResult.success(res);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+//        if (dto.getRequestType().equals("get")) {
+//            try {
+//                if (dto.isEncode()) {
+//
+//                    String res = okClientKit.get(dto.getUrl()).getData();
+//                    log.info("请求原文：");
+//                    log.info(res);
+//                    String result = CryptoUnits.defaultDecrypt(res);
+//                    log.info("解密：");
+//                    log.info(result);
+//                    return WebResult.success(result);
+//                } else {
+//
+//                    String res = okClientKit.get(dto.getUrl()).getData();
+//                    log.info("请求原文：");
+//                    log.info(res);
+//                    return WebResult.success(res);
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         return WebResult.error();
     }
 
     @Override
     public WebResult proxyLogin() {
-        SimpleHttpProxyDto dto = new SimpleHttpProxyDto();
-        dto.setUrl("http://localhost:9091/datasource/login");
-        Map<String, String> m = new HashMap<>();
-        m.put("name", "admin");
-        m.put("password", "admin");
-        okClientKit.post(dto.getUrl(), JSON.toJSONString(m));
+//        SimpleHttpProxyDto dto = new SimpleHttpProxyDto();
+//        dto.setUrl("http://localhost:9091/datasource/login");
+//        Map<String, String> m = new HashMap<>();
+//        m.put("name", "admin");
+//        m.put("password", "admin");
+//        okClientKit.post(dto.getUrl(), JSON.toJSONString(m));
         return null;
     }
 

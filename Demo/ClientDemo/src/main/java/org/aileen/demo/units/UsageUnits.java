@@ -1,7 +1,7 @@
 package org.aileen.demo.units;
 
-import com.alibaba.fastjson.JSON;
 import org.aileen.mod.httpclient.dto.SimpleHttpProxyDto;
+import org.aileen.mod.kit.Base64Kit;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,15 +38,18 @@ public class UsageUnits {
         map.put("token", "token12345");
         map.put("Authorization","Authorization12345");
         dto.setRequestType("post");
-        dto.setBody("hello world!");
+        String body = "{\"name\":\"admin\",\"password\":\"admin\"}";
+        String encodeBody = Base64Kit.encode(body);
+        dto.setBody(encodeBody);
+//        dto.setBody("hello world!");
         dto.setHeaders(map);
         dto.setEncode(false);
         return dto;
     }
 
 
-    public static void main(String[] args) {
-        SimpleHttpProxyDto dto = getAnalyseGetRequestDto();
-        System.out.println(JSON.toJSONString(dto));
-    }
+//    public static void main(String[] args) {
+//        SimpleHttpProxyDto dto = getAnalyseGetRequestDto();
+//        System.out.println(JSON.toJSONString(dto));
+//    }
 }

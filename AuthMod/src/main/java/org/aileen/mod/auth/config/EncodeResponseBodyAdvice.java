@@ -6,6 +6,7 @@ import org.aileen.mod.auth.enums.RequestEncryptType;
 import org.aileen.mod.auth.units.AnnoUnits;
 import org.aileen.mod.auth.units.CryptoUnits;
 import org.aileen.mod.auth.units.SignKeyUnits;
+import org.aileen.mod.kit.Base64Kit;
 import org.aileen.mod.redis.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +33,8 @@ public class EncodeResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     private static final Logger log = LoggerFactory.getLogger(EncodeResponseBodyAdvice.class);
 
-    @Autowired
-    private RedisUtil redisUtil;
+//    @Autowired
+//    private RedisUtil redisUtil;
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
@@ -62,12 +63,13 @@ public class EncodeResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         if (type == RequestEncryptType.RSA) {
             return SignKeyUnits.defaultSignMessage(JSON.toJSONString(body));
         } else {
-            String password = redisUtil.get("password");
-            if (password == null) {
-                return CryptoUnits.defaultEncrypt(JSON.toJSONString(body));
-            } else {
-                return CryptoUnits.encrypt(JSON.toJSONString(body), password);
-            }
+            return Base64Kit.encode(JSON.toJSONString(body));
+//            String password = redisUtil.get("password");
+//            if (password == null) {
+//                return CryptoUnits.defaultEncrypt(JSON.toJSONString(body));
+//            } else {
+//                return CryptoUnits.encrypt(JSON.toJSONString(body), password);
+//            }
         }
         // 否则进行加密
     }

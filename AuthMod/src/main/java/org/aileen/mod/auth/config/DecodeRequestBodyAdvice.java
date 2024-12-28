@@ -12,6 +12,7 @@ import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdviceAdapter;
 
 import java.io.IOException;
@@ -24,14 +25,14 @@ import java.lang.reflect.Type;
  * @author Eugene-Forest
  * {@code @date} 2024/12/9
  */
-//@RestControllerAdvice(annotations = EncryptRequest.class)
+@RestControllerAdvice(annotations = EncryptRequest.class)
 //@RestControllerAdvice(basePackages = {"org.tutor"})
 public class DecodeRequestBodyAdvice extends RequestBodyAdviceAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(DecodeRequestBodyAdvice.class);
 
-    @Autowired
-    private RedisUtil redisUtil;
+//    @Autowired
+//    private RedisUtil redisUtil;
 
     @Override
     public boolean supports(MethodParameter methodParameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
@@ -43,8 +44,8 @@ public class DecodeRequestBodyAdvice extends RequestBodyAdviceAdapter {
     public HttpInputMessage beforeBodyRead(HttpInputMessage inputMessage, MethodParameter parameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) throws IOException {
         //在请求体转换之前执行
         log.debug("DecodeRequestBodyAdvice: beforeBodyRead");
-        HttpHeaders httpHeaders = inputMessage.getHeaders();
-        log.debug("DecodeRequestBodyAdvice: httpHeaders: {}", httpHeaders.toString());
+//        HttpHeaders httpHeaders = inputMessage.getHeaders();
+//        log.debug("DecodeRequestBodyAdvice: httpHeaders: {}", httpHeaders.toString());
         boolean isDecode = false;
         Method method = parameter.getMethod();
         if (method == null) {
@@ -56,13 +57,15 @@ public class DecodeRequestBodyAdvice extends RequestBodyAdviceAdapter {
         isDecode = encryptRequest.decryptRequestBody();
         if (isDecode) {
             if (type == RequestEncryptType.AES) {
-                String password = redisUtil.get("password");
-                if (password != null) {
-                    return new DecodeHttpInputMessage(inputMessage, password);
-                } else {
-                    //TODO: throw error message
-                    throw new RuntimeException("password is null, not login");
-                }
+                return inputMessage;
+//                return new DecodeHttpInputMessage(inputMessage);
+//                String password = redisUtil.get("password");
+//                if (password != null) {
+//                    return new DecodeHttpInputMessage(inputMessage, password);
+//                } else {
+//                    //TODO: throw error message
+//                    throw new RuntimeException("password is null, not login");
+//                }
             } else {
                 return new DecodeHttpInputMessage(inputMessage, type);
             }

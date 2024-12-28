@@ -26,6 +26,7 @@ public class HttpAnalyseServiceImpl implements HttpAnalyseService {
     @Override
     public Object analysePostRequest(String body) {
         log.info("analysePostRequest");
-        return body;
+        log.info("body: " + body);
+        return "i get it";
     }
 }

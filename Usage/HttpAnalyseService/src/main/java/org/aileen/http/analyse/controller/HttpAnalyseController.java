@@ -1,6 +1,7 @@
 package org.aileen.http.analyse.controller;
 
 import org.aileen.http.analyse.service.HttpAnalyseService;
+import org.aileen.mod.auth.anno.EncryptRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +12,7 @@ import java.util.Map;
  * {@code @date} 2024/12/16
  */
 @RestController
+@EncryptRequest
 @RequestMapping("/analyse")
 public class HttpAnalyseController {
 

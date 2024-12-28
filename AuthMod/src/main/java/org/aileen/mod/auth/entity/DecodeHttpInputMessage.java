@@ -4,6 +4,7 @@ package org.aileen.mod.auth.entity;
 import org.aileen.mod.auth.enums.RequestEncryptType;
 import org.aileen.mod.auth.units.CryptoUnits;
 import org.aileen.mod.auth.units.SignKeyUnits;
+import org.aileen.mod.kit.Base64Kit;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
@@ -34,6 +35,11 @@ public class DecodeHttpInputMessage implements HttpInputMessage {
         this.headers = inputMessage.getHeaders();
         String content = IOUtils.toString(inputMessage.getBody(), StandardCharsets.UTF_8);
         this.body = IOUtils.toInputStream(CryptoUnits.decrypt(content, password));
+    }
+
+    public DecodeHttpInputMessage(HttpInputMessage inputMessage) throws IOException {
+        String content = IOUtils.toString(inputMessage.getBody(), StandardCharsets.UTF_8);
+        this.body = IOUtils.toInputStream(Base64Kit.decode(content));//默认Base64解码
     }
 
     @Override
