@@ -1,5 +1,9 @@
 package org.aileen.mod.kit;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
@@ -13,6 +17,8 @@ public class Base64Kit {
     private static final Base64.Encoder encoder = Base64.getEncoder();
 
     private static final Base64.Decoder decoder = Base64.getDecoder();
+
+    private static final Logger log = LoggerFactory.getLogger(Base64Kit.class);
 
     /**
      * 将字节数组转换为UTF-8字符串。
@@ -41,10 +47,20 @@ public class Base64Kit {
      * @return 编码后的Base64字符串
      */
     public static String encode(String str) {
-        return encoder.encodeToString(getBytes(str));
+        try {
+            log.debug("开始对字符串进行Base64编码。");
+            return encoder.encodeToString(getBytes(str));
+        }catch (Exception e){
+            throw new RuntimeException("Base64编码失败",e);
+        }
     }
 
     public static String decode(String str) {
-        return getString(decoder.decode(str));
+        try {
+            log.debug("开始对字符串进行Base64解码。");
+            return getString(decoder.decode(str));
+        }catch (Exception e){
+            throw new RuntimeException("Base64解码失败",e);
+        }
     }
 }

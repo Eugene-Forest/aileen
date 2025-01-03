@@ -57,8 +57,8 @@ public class DecodeRequestBodyAdvice extends RequestBodyAdviceAdapter {
         isDecode = encryptRequest.decryptRequestBody();
         if (isDecode) {
             if (type == RequestEncryptType.AES) {
-                return inputMessage;
-//                return new DecodeHttpInputMessage(inputMessage);
+//                return inputMessage;
+                return new DecodeHttpInputMessage(inputMessage);
 //                String password = redisUtil.get("password");
 //                if (password != null) {
 //                    return new DecodeHttpInputMessage(inputMessage, password);
