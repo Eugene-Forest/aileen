@@ -2,9 +2,12 @@ package org.aileen.http.analyse.controller;
 
 import org.aileen.http.analyse.service.HttpAnalyseService;
 import org.aileen.mod.auth.anno.EncryptRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -16,6 +19,7 @@ import java.util.Map;
 @RequestMapping("/analyse")
 public class HttpAnalyseController {
 
+    private static final Logger log = LoggerFactory.getLogger(HttpAnalyseController.class);
     @Autowired
     private HttpAnalyseService httpAnalyseService;
 
@@ -25,7 +29,8 @@ public class HttpAnalyseController {
     }
 
     @PostMapping("/post")
-    public Object postAnalyse(@RequestBody String body){
+    public Object postAnalyse(@RequestBody Object body){
+        log.info("postAnalyse");
         return httpAnalyseService.analysePostRequest(body);
     }
 

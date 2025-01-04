@@ -1,10 +1,12 @@
 package org.aileen.http.analyse.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import org.aileen.http.analyse.service.HttpAnalyseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -24,9 +26,9 @@ public class HttpAnalyseServiceImpl implements HttpAnalyseService {
     }
 
     @Override
-    public Object analysePostRequest(String body) {
+    public Object analysePostRequest(Object body) {
         log.info("analysePostRequest");
-        log.info("body: " + body);
+        log.info("body: " + JSON.toJSONString(body));
         return "i get it";
     }
 }

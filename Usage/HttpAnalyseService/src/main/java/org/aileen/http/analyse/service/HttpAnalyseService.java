@@ -1,5 +1,6 @@
 package org.aileen.http.analyse.service;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -10,5 +11,5 @@ public interface HttpAnalyseService {
 
     Object analyseGetRequest(Map<String,String> args);
 
-    Object analysePostRequest(String body);
+    Object analysePostRequest(Object body);
 }

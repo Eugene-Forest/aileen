@@ -5,3 +5,5 @@ server:
 logging:
   level:
     org.aileen: debug
+    org.springframework.web: debug
+    com.fasterxml.jackson: debug
