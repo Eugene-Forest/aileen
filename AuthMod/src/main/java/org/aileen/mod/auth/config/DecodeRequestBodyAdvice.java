@@ -4,10 +4,8 @@ import org.aileen.mod.auth.anno.EncryptRequest;
 import org.aileen.mod.auth.entity.DecodeHttpInputMessage;
 import org.aileen.mod.auth.enums.RequestEncryptType;
 import org.aileen.mod.auth.units.AnnoUnits;
-import org.aileen.mod.redis.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
@@ -18,6 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdviceAd
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * 处理请求体
@@ -44,31 +43,58 @@ public class DecodeRequestBodyAdvice extends RequestBodyAdviceAdapter {
     public HttpInputMessage beforeBodyRead(HttpInputMessage inputMessage, MethodParameter parameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) throws IOException {
         //在请求体转换之前执行
         log.debug("DecodeRequestBodyAdvice: beforeBodyRead");
-        HttpHeaders httpHeaders = inputMessage.getHeaders();
-        log.debug("DecodeRequestBodyAdvice: httpHeaders: {}", httpHeaders.toString());
-        boolean isDecode = false;
         Method method = parameter.getMethod();
         if (method == null) {
             log.warn("method is null");
             throw new RuntimeException("method is null");
         }
         EncryptRequest encryptRequest = AnnoUnits.getAnno(method, EncryptRequest.class);
-        RequestEncryptType type = encryptRequest.encryptType();
-        isDecode = encryptRequest.decryptRequestBody();
-        if (isDecode) {
-            if (type == RequestEncryptType.AES) {
-//                return inputMessage;
-                return new DecodeHttpInputMessage(inputMessage);
-//                String password = redisUtil.get("password");
-//                if (password != null) {
-//                    return new DecodeHttpInputMessage(inputMessage, password);
-//                } else {
-//                    //TODO: throw error message
-//                    throw new RuntimeException("password is null, not login");
-//                }
-            } else {
-                return new DecodeHttpInputMessage(inputMessage, type);
+        if (encryptRequest == null) {
+            return inputMessage;
+        }
+        RequestEncryptType requestEncryptType = encryptRequest.encryptType();
+        HttpHeaders httpHeaders = inputMessage.getHeaders();
+        //获取请求头上的加密标识
+        boolean isHttpEncrypt = false;
+        if (httpHeaders.containsKey("encrypt")) {
+            List<String> encryptValues = httpHeaders.get("encrypt");
+            if (encryptValues != null && !encryptValues.isEmpty()) {
+                String encryptValue = encryptValues.get(0);
+                RequestEncryptType matchValue = RequestEncryptType.matchValue(encryptValue);
+                if(matchValue != null){
+                    if (!encryptRequest.decryptRequestBody()) {
+                        throw new RuntimeException("接口的请求体没有定义加密");
+                    }
+                    if(requestEncryptType != matchValue){
+                        throw new RuntimeException("加密类型与接口方法体的加密类型不一致");
+                    }
+                    isHttpEncrypt = true;
+
+                }
             }
+        }
+        if (isHttpEncrypt) {
+            HttpInputMessage decodeHttpInputMessage;
+            switch (requestEncryptType) {
+                case AES: {
+                    //TODO: get password from redis；待验证
+                    decodeHttpInputMessage = new DecodeHttpInputMessage(inputMessage, "password");
+                    break;
+                }
+                case Base64: {
+                    decodeHttpInputMessage = new DecodeHttpInputMessage(inputMessage);
+                    break;
+                }
+                case RSA: {
+                    //TODO: 待验证
+                    decodeHttpInputMessage = new DecodeHttpInputMessage(inputMessage, type);
+                    break;
+                }
+                default: {
+                    throw new RuntimeException("加密类型错误");
+                }
+            }
+            return decodeHttpInputMessage;
         } else {
             return inputMessage;
         }
@@ -79,7 +105,7 @@ public class DecodeRequestBodyAdvice extends RequestBodyAdviceAdapter {
         log.debug("DecodeRequestBodyAdvice: afterBodyRead");
         try {
 
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("DecodeRequestBodyAdvice: afterBodyRead error", e);
         }
 

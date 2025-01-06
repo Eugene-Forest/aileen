@@ -37,6 +37,7 @@ public class UsageUnits {
         map.put("path", "get");
         map.put("token", "token12345");
         map.put("Authorization","Authorization12345");
+        map.put("encrypt","Base64");//添加加密标识
         dto.setRequestType("post");
         String body = "{\"name\":\"admin\",\"password\":\"admin\"}";
         String encodeBody = Base64Kit.encode(body);

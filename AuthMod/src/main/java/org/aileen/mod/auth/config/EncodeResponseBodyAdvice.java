@@ -7,11 +7,10 @@ import org.aileen.mod.auth.units.AnnoUnits;
 import org.aileen.mod.auth.units.CryptoUnits;
 import org.aileen.mod.auth.units.SignKeyUnits;
 import org.aileen.mod.kit.Base64Kit;
-import org.aileen.mod.redis.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
@@ -19,9 +18,8 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-
-
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * @author Eugene-Forest
@@ -50,27 +48,45 @@ public class EncodeResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         }
         Method method = returnType.getMethod();
         if (method == null) {
-            return body;
+            log.warn("method is null");
+            throw new RuntimeException("method is null");
         }
         EncryptRequest encryptRequest = AnnoUnits.getAnno(method, EncryptRequest.class);
         if (encryptRequest == null) {
             return body;
         }
-        if (!encryptRequest.encryptResult()) {
+        HttpHeaders httpHeaders = request.getHeaders();
+        //获取请求头上的加密标识
+        boolean isHttpEncrypt = false;
+        if (httpHeaders.containsKey("encrypt")) {
+            List<String> encryptValues = httpHeaders.get("encrypt");
+            if (encryptValues != null && !encryptValues.isEmpty()) {
+                String encryptValue = encryptValues.get(0);
+                isHttpEncrypt = "true".equalsIgnoreCase(encryptValue);
+            }
+        }
+        if (isHttpEncrypt != encryptRequest.encryptResult()) {
+            throw new RuntimeException("加密标识与接口方法体的加密标识不一致");
+        }
+        if (!isHttpEncrypt) {
             return body;
         }
-        RequestEncryptType type = encryptRequest.encryptType();
-        if (type == RequestEncryptType.RSA) {
-            return SignKeyUnits.defaultSignMessage(JSON.toJSONString(body));
-        } else {
-            return Base64Kit.encode(JSON.toJSONString(body));
-//            String password = redisUtil.get("password");
-//            if (password == null) {
-//                return CryptoUnits.defaultEncrypt(JSON.toJSONString(body));
-//            } else {
-//                return CryptoUnits.encrypt(JSON.toJSONString(body), password);
-//            }
-        }
         // 否则进行加密
+        RequestEncryptType type = encryptRequest.encryptType();
+        log.debug("接口返回加密 encryptType:{}", type);
+        switch (type) {
+            case AES: {
+                return CryptoUnits.defaultEncrypt(JSON.toJSONString(body));
+            }
+            case RSA: {
+                return SignKeyUnits.defaultSignMessage(JSON.toJSONString(body));
+            }
+            case Base64: {
+                return Base64Kit.encode(JSON.toJSONString(body));
+            }
+            default: {
+                throw new RuntimeException("不支持的加密类型");
+            }
+        }
     }
 }

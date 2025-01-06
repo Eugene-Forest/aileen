@@ -30,5 +30,5 @@ public @interface EncryptRequest {
     /**
      * 加密类型；默认为 AES 加密
      */
-    RequestEncryptType encryptType() default RequestEncryptType.AES;
+    RequestEncryptType encryptType() default RequestEncryptType.Base64;
 }
