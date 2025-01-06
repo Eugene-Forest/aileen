@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -42,12 +43,21 @@ public class DecodeHttpInputMessage implements HttpInputMessage {
     }
 
     public DecodeHttpInputMessage(HttpInputMessage inputMessage) throws IOException {
+        this.headers = inputMessage.getHeaders();
         String content = IOUtils.toString(inputMessage.getBody(), StandardCharsets.UTF_8);
         String message = Base64Kit.decode(content);
-        Object object = JSON.parseObject(message, Object.class);
         log.debug("DecodeHttpInputMessage: message: {}", message);
-        this.body = IOUtils.toInputStream(JSON.toJSONString(object));//默认Base64解码
-        log.debug("final");
+        ensureJsonFormat(message);
+        this.body = new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private void ensureJsonFormat(String content) throws IOException {
+        try {
+            JSON.parseObject(content);
+        } catch (Exception e) {
+            log.error("Decrypted content is not valid JSON: {}", content, e);
+            throw new IOException("Decrypted content is not valid JSON", e);
+        }
     }
 
     @Override

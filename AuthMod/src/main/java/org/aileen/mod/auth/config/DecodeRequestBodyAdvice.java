@@ -44,8 +44,8 @@ public class DecodeRequestBodyAdvice extends RequestBodyAdviceAdapter {
     public HttpInputMessage beforeBodyRead(HttpInputMessage inputMessage, MethodParameter parameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) throws IOException {
         //在请求体转换之前执行
         log.debug("DecodeRequestBodyAdvice: beforeBodyRead");
-//        HttpHeaders httpHeaders = inputMessage.getHeaders();
-//        log.debug("DecodeRequestBodyAdvice: httpHeaders: {}", httpHeaders.toString());
+        HttpHeaders httpHeaders = inputMessage.getHeaders();
+        log.debug("DecodeRequestBodyAdvice: httpHeaders: {}", httpHeaders.toString());
         boolean isDecode = false;
         Method method = parameter.getMethod();
         if (method == null) {
@@ -77,6 +77,12 @@ public class DecodeRequestBodyAdvice extends RequestBodyAdviceAdapter {
     @Override
     public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
         log.debug("DecodeRequestBodyAdvice: afterBodyRead");
+        try {
+
+        }catch (Exception e){
+            log.error("DecodeRequestBodyAdvice: afterBodyRead error", e);
+        }
+
         return super.afterBodyRead(body, inputMessage, parameter, targetType, converterType);
     }
 
