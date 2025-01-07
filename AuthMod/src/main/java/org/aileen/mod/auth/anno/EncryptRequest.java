@@ -17,15 +17,15 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EncryptRequest {
-    /**
-     * RequestBody 是否解密，默认解密
-     */
-    boolean decryptRequestBody() default true;
-
-    /**
-     * 出参是否加密，默认加密
-     */
-    boolean encryptResult() default true;
+//    /**
+//     * RequestBody 是否解密，默认解密
+//     */
+//    boolean decryptRequestBody() default true;
+//
+//    /**
+//     * 出参是否加密，默认加密
+//     */
+//    boolean encryptResult() default true;
 
     /**
      * 加密类型；默认为 AES 加密

@@ -55,22 +55,6 @@ public class EncodeResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         if (encryptRequest == null) {
             return body;
         }
-        HttpHeaders httpHeaders = request.getHeaders();
-        //获取请求头上的加密标识
-        boolean isHttpEncrypt = false;
-        if (httpHeaders.containsKey("encrypt")) {
-            List<String> encryptValues = httpHeaders.get("encrypt");
-            if (encryptValues != null && !encryptValues.isEmpty()) {
-                String encryptValue = encryptValues.get(0);
-                isHttpEncrypt = "true".equalsIgnoreCase(encryptValue);
-            }
-        }
-        if (isHttpEncrypt != encryptRequest.encryptResult()) {
-            throw new RuntimeException("加密标识与接口方法体的加密标识不一致");
-        }
-        if (!isHttpEncrypt) {
-            return body;
-        }
         // 否则进行加密
         RequestEncryptType type = encryptRequest.encryptType();
         log.debug("接口返回加密 encryptType:{}", type);

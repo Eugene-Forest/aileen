@@ -28,3 +28,7 @@ Content-Type: application/json
 {
   "name": "post"
 }
+
+
+### clinet analysePostJson
+GET http://127.0.0.1:8888/client/analysePostJson?id=1

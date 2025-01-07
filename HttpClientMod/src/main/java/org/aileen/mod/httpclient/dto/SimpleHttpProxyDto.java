@@ -13,7 +13,7 @@ public class SimpleHttpProxyDto {
     private String requestType;
     private Map<String, String> headers;
     private String body;
-    private boolean isEncode = true;
+//    private boolean isEncode = true;
 
     public String getUrl() {
         return url;
@@ -47,11 +47,11 @@ public class SimpleHttpProxyDto {
         this.body = body;
     }
 
-    public boolean isEncode() {
-        return isEncode;
-    }
-
-    public void setEncode(boolean encode) {
-        isEncode = encode;
-    }
+//    public boolean isEncode() {
+//        return isEncode;
+//    }
+//
+//    public void setEncode(boolean encode) {
+//        isEncode = encode;
+//    }
 }

@@ -2,6 +2,7 @@ package org.aileen.http.analyse.controller;
 
 import org.aileen.http.analyse.service.HttpAnalyseService;
 import org.aileen.mod.auth.anno.EncryptRequest;
+import org.aileen.mod.auth.enums.RequestEncryptType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,13 @@ public class HttpAnalyseController {
     @PostMapping("/post")
     public Object postAnalyse(@RequestBody Object body){
         log.info("postAnalyse");
+        return httpAnalyseService.analysePostRequest(body);
+    }
+
+    @EncryptRequest(encryptType = RequestEncryptType.AES)
+    @PostMapping("/aes/post")
+    public Object aesPostAnalyse(@RequestBody Object body){
+        log.info("aesPostAnalyse");
         return httpAnalyseService.analysePostRequest(body);
     }
 

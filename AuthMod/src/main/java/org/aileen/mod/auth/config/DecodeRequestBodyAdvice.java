@@ -3,6 +3,7 @@ package org.aileen.mod.auth.config;
 import org.aileen.mod.auth.anno.EncryptRequest;
 import org.aileen.mod.auth.entity.DecodeHttpInputMessage;
 import org.aileen.mod.auth.enums.RequestEncryptType;
+import org.aileen.mod.auth.helper.AmHttpHelper;
 import org.aileen.mod.auth.units.AnnoUnits;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,17 +55,14 @@ public class DecodeRequestBodyAdvice extends RequestBodyAdviceAdapter {
         }
         RequestEncryptType requestEncryptType = encryptRequest.encryptType();
         HttpHeaders httpHeaders = inputMessage.getHeaders();
-        //获取请求头上的加密标识
+        //获取请求头上的加密标识; 需要HTTP请求头来判断请求体是否进行了加密和加密的手段，方便解密
         boolean isHttpEncrypt = false;
-        if (httpHeaders.containsKey("encrypt")) {
-            List<String> encryptValues = httpHeaders.get("encrypt");
+        if (httpHeaders.containsKey(AmHttpHelper.ENCRYPT_HEADER)) {
+            List<String> encryptValues = httpHeaders.get(AmHttpHelper.ENCRYPT_HEADER);
             if (encryptValues != null && !encryptValues.isEmpty()) {
                 String encryptValue = encryptValues.get(0);
                 RequestEncryptType matchValue = RequestEncryptType.matchValue(encryptValue);
                 if(matchValue != null){
-                    if (!encryptRequest.decryptRequestBody()) {
-                        throw new RuntimeException("接口的请求体没有定义加密");
-                    }
                     if(requestEncryptType != matchValue){
                         throw new RuntimeException("加密类型与接口方法体的加密类型不一致");
                     }
@@ -77,17 +75,18 @@ public class DecodeRequestBodyAdvice extends RequestBodyAdviceAdapter {
             HttpInputMessage decodeHttpInputMessage;
             switch (requestEncryptType) {
                 case AES: {
-                    //TODO: get password from redis；待验证
-                    decodeHttpInputMessage = new DecodeHttpInputMessage(inputMessage, "password");
+                    //默认AES解密
+                    decodeHttpInputMessage = new DecodeHttpInputMessage(inputMessage, requestEncryptType);
                     break;
                 }
                 case Base64: {
+                    //Base64解码
                     decodeHttpInputMessage = new DecodeHttpInputMessage(inputMessage);
                     break;
                 }
                 case RSA: {
-                    //TODO: 待验证
-                    decodeHttpInputMessage = new DecodeHttpInputMessage(inputMessage, type);
+                    //默认RSA解密
+                    decodeHttpInputMessage = new DecodeHttpInputMessage(inputMessage, requestEncryptType);
                     break;
                 }
                 default: {
@@ -96,19 +95,13 @@ public class DecodeRequestBodyAdvice extends RequestBodyAdviceAdapter {
             }
             return decodeHttpInputMessage;
         } else {
-            return inputMessage;
+            throw new RuntimeException("请求头缺少加密标识");
         }
     }
 
     @Override
     public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
         log.debug("DecodeRequestBodyAdvice: afterBodyRead");
-        try {
-
-        } catch (Exception e) {
-            log.error("DecodeRequestBodyAdvice: afterBodyRead error", e);
-        }
-
         return super.afterBodyRead(body, inputMessage, parameter, targetType, converterType);
     }
 

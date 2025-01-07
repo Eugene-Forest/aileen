@@ -17,4 +17,6 @@ public interface ClientDemoService {
     WebResult proxyAnalyseGet();
 
     WebResult proxyAnalysePost();
+
+    WebResult proxyAnalysePostJson(Integer id);
 }

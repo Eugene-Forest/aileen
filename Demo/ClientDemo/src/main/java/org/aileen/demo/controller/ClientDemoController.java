@@ -36,4 +36,9 @@ public class ClientDemoController {
     public WebResult proxyAnalysePost() {
         return clientDemoService.proxyAnalysePost();
     }
+
+    @GetMapping("/analysePostJson")
+    public WebResult proxyAnalysePostJson(@RequestParam Integer id) {
+        return clientDemoService.proxyAnalysePostJson(id);
+    }
 }

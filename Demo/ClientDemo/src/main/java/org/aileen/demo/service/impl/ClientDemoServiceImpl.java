@@ -1,8 +1,10 @@
 package org.aileen.demo.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.aileen.demo.service.ClientDemoService;
 import org.aileen.demo.units.UsageUnits;
+import org.aileen.mod.auth.units.CryptoUnits;
 import org.aileen.mod.httpclient.dto.SimpleHttpProxyDto;
 import org.aileen.mod.httpclient.units.OkClientKit;
 import org.aileen.mod.kit.dto.WebResult;
@@ -67,5 +69,24 @@ public class ClientDemoServiceImpl implements ClientDemoService {
     @Override
     public WebResult proxyAnalysePost() {
         return okClientKit.simpleHttpProxy(UsageUnits.getAnalysePostRequestDto());
+    }
+
+    @Override
+    public WebResult proxyAnalysePostJson(Integer id) {
+        WebResult result = WebResult.error();
+        switch (id) {
+            case 1: {
+                result = okClientKit.simpleHttpProxy(UsageUnits.getAnalysePostRequestDto2());
+                if(WebResult.isSuccess(result)){
+                    String res = CryptoUnits.defaultDecrypt(result.getData().toString());
+                    result.setData(res);
+                }
+            }
+//            case 2:
+//                return okClientKit.simpleHttpProxy(UsageUnits.getAnalysePostRequestDto3());
+//            case 3:
+//                return okClientKit.simpleHttpProxy(UsageUnits.getAnalysePostRequestDto4());
+        }
+        return result;
     }
 }

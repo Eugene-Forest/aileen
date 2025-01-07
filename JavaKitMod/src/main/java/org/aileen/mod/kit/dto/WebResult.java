@@ -57,6 +57,9 @@ public class WebResult<T> implements Serializable {
         return new WebResult<T>(500, "error");
     }
 
+    public static boolean isSuccess(WebResult result) {
+        return result != null && result.code == 200;
+    }
 
     public Integer getCode() {
         return code;
