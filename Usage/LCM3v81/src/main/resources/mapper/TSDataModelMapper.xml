@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.aileen.lc.dao.TSDataModelMapper">
+  <resultMap id="BaseResultMap" type="org.aileen.lc.model.TSDataModel">
+    <id column="ModelID" jdbcType="VARCHAR" property="modelID" />
+    <result column="ModelName" jdbcType="VARCHAR" property="modelName" />
+    <result column="ModelTitle" jdbcType="VARCHAR" property="modelTitle" />
+    <result column="Description" jdbcType="VARCHAR" property="description" />
+    <result column="ModelCategory" jdbcType="VARCHAR" property="modelCategory" />
+    <result column="ModelStatus" jdbcType="VARCHAR" property="modelStatus" />
+    <result column="ModelRevision" jdbcType="VARCHAR" property="modelRevision" />
+    <result column="ModelSchemaVersion" jdbcType="VARCHAR" property="modelSchemaVersion" />
+    <result column="IsSystemDefault" jdbcType="TINYINT" property="isSystemDefault" />
+    <result column="CreateTime" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="ChangeTime" jdbcType="TIMESTAMP" property="changeTime" />
+    <result column="CreateBy" jdbcType="VARCHAR" property="createBy" />
+    <result column="ChangeBy" jdbcType="VARCHAR" property="changeBy" />
+    <result column="ModuleID" jdbcType="VARCHAR" property="moduleID" />
+    <result column="ModuleGroupID" jdbcType="VARCHAR" property="moduleGroupID" />
+    <result column="ModuleFunctionID" jdbcType="VARCHAR" property="moduleFunctionID" />
+    <result column="SerializationUrl" jdbcType="VARCHAR" property="serializationUrl" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ModelID, ModelName, ModelTitle, Description, ModelCategory, ModelStatus, ModelRevision, 
+    ModelSchemaVersion, IsSystemDefault, CreateTime, ChangeTime, CreateBy, ChangeBy, 
+    ModuleID, ModuleGroupID, ModuleFunctionID, SerializationUrl
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from TSDataModel
+    where ModelID = #{modelID,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from TSDataModel
+    where ModelID = #{modelID,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.aileen.lc.model.TSDataModel">
+    insert into TSDataModel (ModelID, ModelName, ModelTitle, 
+      Description, ModelCategory, ModelStatus, 
+      ModelRevision, ModelSchemaVersion, IsSystemDefault, 
+      CreateTime, ChangeTime, CreateBy, 
+      ChangeBy, ModuleID, ModuleGroupID, 
+      ModuleFunctionID, SerializationUrl)
+    values (#{modelID,jdbcType=VARCHAR}, #{modelName,jdbcType=VARCHAR}, #{modelTitle,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{modelCategory,jdbcType=VARCHAR}, #{modelStatus,jdbcType=VARCHAR}, 
+      #{modelRevision,jdbcType=VARCHAR}, #{modelSchemaVersion,jdbcType=VARCHAR}, #{isSystemDefault,jdbcType=TINYINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{changeTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
+      #{changeBy,jdbcType=VARCHAR}, #{moduleID,jdbcType=VARCHAR}, #{moduleGroupID,jdbcType=VARCHAR}, 
+      #{moduleFunctionID,jdbcType=VARCHAR}, #{serializationUrl,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="org.aileen.lc.model.TSDataModel">
+    insert into TSDataModel
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="modelID != null">
+        ModelID,
+      </if>
+      <if test="modelName != null">
+        ModelName,
+      </if>
+      <if test="modelTitle != null">
+        ModelTitle,
+      </if>
+      <if test="description != null">
+        Description,
+      </if>
+      <if test="modelCategory != null">
+        ModelCategory,
+      </if>
+      <if test="modelStatus != null">
+        ModelStatus,
+      </if>
+      <if test="modelRevision != null">
+        ModelRevision,
+      </if>
+      <if test="modelSchemaVersion != null">
+        ModelSchemaVersion,
+      </if>
+      <if test="isSystemDefault != null">
+        IsSystemDefault,
+      </if>
+      <if test="createTime != null">
+        CreateTime,
+      </if>
+      <if test="changeTime != null">
+        ChangeTime,
+      </if>
+      <if test="createBy != null">
+        CreateBy,
+      </if>
+      <if test="changeBy != null">
+        ChangeBy,
+      </if>
+      <if test="moduleID != null">
+        ModuleID,
+      </if>
+      <if test="moduleGroupID != null">
+        ModuleGroupID,
+      </if>
+      <if test="moduleFunctionID != null">
+        ModuleFunctionID,
+      </if>
+      <if test="serializationUrl != null">
+        SerializationUrl,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="modelID != null">
+        #{modelID,jdbcType=VARCHAR},
+      </if>
+      <if test="modelName != null">
+        #{modelName,jdbcType=VARCHAR},
+      </if>
+      <if test="modelTitle != null">
+        #{modelTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="modelCategory != null">
+        #{modelCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="modelStatus != null">
+        #{modelStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="modelRevision != null">
+        #{modelRevision,jdbcType=VARCHAR},
+      </if>
+      <if test="modelSchemaVersion != null">
+        #{modelSchemaVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="isSystemDefault != null">
+        #{isSystemDefault,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="changeTime != null">
+        #{changeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="changeBy != null">
+        #{changeBy,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleID != null">
+        #{moduleID,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleGroupID != null">
+        #{moduleGroupID,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleFunctionID != null">
+        #{moduleFunctionID,jdbcType=VARCHAR},
+      </if>
+      <if test="serializationUrl != null">
+        #{serializationUrl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.aileen.lc.model.TSDataModel">
+    update TSDataModel
+    <set>
+      <if test="modelName != null">
+        ModelName = #{modelName,jdbcType=VARCHAR},
+      </if>
+      <if test="modelTitle != null">
+        ModelTitle = #{modelTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        Description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="modelCategory != null">
+        ModelCategory = #{modelCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="modelStatus != null">
+        ModelStatus = #{modelStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="modelRevision != null">
+        ModelRevision = #{modelRevision,jdbcType=VARCHAR},
+      </if>
+      <if test="modelSchemaVersion != null">
+        ModelSchemaVersion = #{modelSchemaVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="isSystemDefault != null">
+        IsSystemDefault = #{isSystemDefault,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        CreateTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="changeTime != null">
+        ChangeTime = #{changeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        CreateBy = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="changeBy != null">
+        ChangeBy = #{changeBy,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleID != null">
+        ModuleID = #{moduleID,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleGroupID != null">
+        ModuleGroupID = #{moduleGroupID,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleFunctionID != null">
+        ModuleFunctionID = #{moduleFunctionID,jdbcType=VARCHAR},
+      </if>
+      <if test="serializationUrl != null">
+        SerializationUrl = #{serializationUrl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ModelID = #{modelID,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.aileen.lc.model.TSDataModel">
+    update TSDataModel
+    set ModelName = #{modelName,jdbcType=VARCHAR},
+      ModelTitle = #{modelTitle,jdbcType=VARCHAR},
+      Description = #{description,jdbcType=VARCHAR},
+      ModelCategory = #{modelCategory,jdbcType=VARCHAR},
+      ModelStatus = #{modelStatus,jdbcType=VARCHAR},
+      ModelRevision = #{modelRevision,jdbcType=VARCHAR},
+      ModelSchemaVersion = #{modelSchemaVersion,jdbcType=VARCHAR},
+      IsSystemDefault = #{isSystemDefault,jdbcType=TINYINT},
+      CreateTime = #{createTime,jdbcType=TIMESTAMP},
+      ChangeTime = #{changeTime,jdbcType=TIMESTAMP},
+      CreateBy = #{createBy,jdbcType=VARCHAR},
+      ChangeBy = #{changeBy,jdbcType=VARCHAR},
+      ModuleID = #{moduleID,jdbcType=VARCHAR},
+      ModuleGroupID = #{moduleGroupID,jdbcType=VARCHAR},
+      ModuleFunctionID = #{moduleFunctionID,jdbcType=VARCHAR},
+      SerializationUrl = #{serializationUrl,jdbcType=VARCHAR}
+    where ModelID = #{modelID,jdbcType=VARCHAR}
+  </update>
+</mapper>
