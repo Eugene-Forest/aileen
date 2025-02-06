@@ -24,29 +24,12 @@ public class ClientDemoServiceImpl implements ClientDemoService {
 
     @Override
     public WebResult proxyHttp(SimpleHttpProxyDto dto) {
-//        if (dto.getRequestType().equals("get")) {
-//            try {
-//                if (dto.isEncode()) {
-//
-//                    String res = okClientKit.get(dto.getUrl()).getData();
-//                    log.info("请求原文：");
-//                    log.info(res);
-//                    String result = CryptoUnits.defaultDecrypt(res);
-//                    log.info("解密：");
-//                    log.info(result);
-//                    return WebResult.success(result);
-//                } else {
-//
-//                    String res = okClientKit.get(dto.getUrl()).getData();
-//                    log.info("请求原文：");
-//                    log.info(res);
-//                    return WebResult.success(res);
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-
+        WebResult result = okClientKit.simpleHttpProxy(dto);
+        if(WebResult.isSuccess(result)) {
+            String res = CryptoUnits.defaultDecrypt(result.getData().toString());
+            result.setData(res);
+            return result;
+        }
         return WebResult.error();
     }
 

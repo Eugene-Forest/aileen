@@ -32,3 +32,13 @@ Content-Type: application/json
 
 ### clinet analysePostJson
 GET http://127.0.0.1:8888/client/analysePostJson?id=1
+
+### database set
+POST http://localhost:8888/client/post
+Content-Type: application/json
+
+{
+  "url": "http://localhost:9091/datasource/getDataSourceSets",
+  "requestType": "get",
+  "body": ""
+}
