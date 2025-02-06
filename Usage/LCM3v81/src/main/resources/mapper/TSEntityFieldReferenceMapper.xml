@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.aileen.lc.dao.TSEntityFieldReferenceMapper">
+  <resultMap id="BaseResultMap" type="org.aileen.lc.model.TSEntityFieldReference">
+    <id column="ID" jdbcType="VARCHAR" property="ID" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="org.aileen.lc.model.TSEntityFieldReference">
+    <result column="ModelID" jdbcType="VARBINARY" property="modelID" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID
+  </sql>
+  <sql id="Blob_Column_List">
+    ModelID
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from TSEntityFieldReference
+    where ID = #{ID,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from TSEntityFieldReference
+    where ID = #{ID,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.aileen.lc.model.TSEntityFieldReference">
+    insert into TSEntityFieldReference (ID, ModelID)
+    values (#{ID,jdbcType=VARCHAR}, #{modelID,jdbcType=VARBINARY})
+  </insert>
+  <insert id="insertSelective" parameterType="org.aileen.lc.model.TSEntityFieldReference">
+    insert into TSEntityFieldReference
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ID != null">
+        ID,
+      </if>
+      <if test="modelID != null">
+        ModelID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="ID != null">
+        #{ID,jdbcType=VARCHAR},
+      </if>
+      <if test="modelID != null">
+        #{modelID,jdbcType=VARBINARY},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.aileen.lc.model.TSEntityFieldReference">
+    update TSEntityFieldReference
+    <set>
+      <if test="modelID != null">
+        ModelID = #{modelID,jdbcType=VARBINARY},
+      </if>
+    </set>
+    where ID = #{ID,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="org.aileen.lc.model.TSEntityFieldReference">
+    update TSEntityFieldReference
+    set ModelID = #{modelID,jdbcType=VARBINARY}
+    where ID = #{ID,jdbcType=VARCHAR}
+  </update>
+</mapper>

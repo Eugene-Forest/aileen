@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.aileen.lc.dao.TSEntityFieldMapper">
+  <resultMap id="BaseResultMap" type="org.aileen.lc.model.TSEntityField">
+    <id column="ID" jdbcType="VARCHAR" property="ID" />
+    <result column="Name" jdbcType="VARCHAR" property="name" />
+    <result column="Title" jdbcType="VARCHAR" property="title" />
+    <result column="DataType" jdbcType="VARCHAR" property="dataType" />
+    <result column="ReferenceID" jdbcType="VARCHAR" property="referenceID" />
+    <result column="IsPrimaryKey" jdbcType="TINYINT" property="isPrimaryKey" />
+    <result column="IsNullable" jdbcType="TINYINT" property="isNullable" />
+    <result column="IsAutoIncrement" jdbcType="TINYINT" property="isAutoIncrement" />
+    <result column="IsUnique" jdbcType="TINYINT" property="isUnique" />
+    <result column="DefaultValue" jdbcType="VARCHAR" property="defaultValue" />
+    <result column="Descirption" jdbcType="VARCHAR" property="descirption" />
+    <result column="ParentID" jdbcType="VARCHAR" property="parentID" />
+    <result column="Sort" jdbcType="TINYINT" property="sort" />
+    <result column="Size" jdbcType="INTEGER" property="size" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, Name, Title, DataType, ReferenceID, IsPrimaryKey, IsNullable, IsAutoIncrement, 
+    IsUnique, DefaultValue, Descirption, ParentID, Sort, Size
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from TSEntityField
+    where ID = #{ID,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from TSEntityField
+    where ID = #{ID,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.aileen.lc.model.TSEntityField">
+    insert into TSEntityField (ID, Name, Title, 
+      DataType, ReferenceID, IsPrimaryKey, 
+      IsNullable, IsAutoIncrement, IsUnique, 
+      DefaultValue, Descirption, ParentID, 
+      Sort, Size)
+    values (#{ID,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
+      #{dataType,jdbcType=VARCHAR}, #{referenceID,jdbcType=VARCHAR}, #{isPrimaryKey,jdbcType=TINYINT}, 
+      #{isNullable,jdbcType=TINYINT}, #{isAutoIncrement,jdbcType=TINYINT}, #{isUnique,jdbcType=TINYINT}, 
+      #{defaultValue,jdbcType=VARCHAR}, #{descirption,jdbcType=VARCHAR}, #{parentID,jdbcType=VARCHAR}, 
+      #{sort,jdbcType=TINYINT}, #{size,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="org.aileen.lc.model.TSEntityField">
+    insert into TSEntityField
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ID != null">
+        ID,
+      </if>
+      <if test="name != null">
+        Name,
+      </if>
+      <if test="title != null">
+        Title,
+      </if>
+      <if test="dataType != null">
+        DataType,
+      </if>
+      <if test="referenceID != null">
+        ReferenceID,
+      </if>
+      <if test="isPrimaryKey != null">
+        IsPrimaryKey,
+      </if>
+      <if test="isNullable != null">
+        IsNullable,
+      </if>
+      <if test="isAutoIncrement != null">
+        IsAutoIncrement,
+      </if>
+      <if test="isUnique != null">
+        IsUnique,
+      </if>
+      <if test="defaultValue != null">
+        DefaultValue,
+      </if>
+      <if test="descirption != null">
+        Descirption,
+      </if>
+      <if test="parentID != null">
+        ParentID,
+      </if>
+      <if test="sort != null">
+        Sort,
+      </if>
+      <if test="size != null">
+        Size,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="ID != null">
+        #{ID,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="dataType != null">
+        #{dataType,jdbcType=VARCHAR},
+      </if>
+      <if test="referenceID != null">
+        #{referenceID,jdbcType=VARCHAR},
+      </if>
+      <if test="isPrimaryKey != null">
+        #{isPrimaryKey,jdbcType=TINYINT},
+      </if>
+      <if test="isNullable != null">
+        #{isNullable,jdbcType=TINYINT},
+      </if>
+      <if test="isAutoIncrement != null">
+        #{isAutoIncrement,jdbcType=TINYINT},
+      </if>
+      <if test="isUnique != null">
+        #{isUnique,jdbcType=TINYINT},
+      </if>
+      <if test="defaultValue != null">
+        #{defaultValue,jdbcType=VARCHAR},
+      </if>
+      <if test="descirption != null">
+        #{descirption,jdbcType=VARCHAR},
+      </if>
+      <if test="parentID != null">
+        #{parentID,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null">
+        #{sort,jdbcType=TINYINT},
+      </if>
+      <if test="size != null">
+        #{size,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.aileen.lc.model.TSEntityField">
+    update TSEntityField
+    <set>
+      <if test="name != null">
+        Name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        Title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="dataType != null">
+        DataType = #{dataType,jdbcType=VARCHAR},
+      </if>
+      <if test="referenceID != null">
+        ReferenceID = #{referenceID,jdbcType=VARCHAR},
+      </if>
+      <if test="isPrimaryKey != null">
+        IsPrimaryKey = #{isPrimaryKey,jdbcType=TINYINT},
+      </if>
+      <if test="isNullable != null">
+        IsNullable = #{isNullable,jdbcType=TINYINT},
+      </if>
+      <if test="isAutoIncrement != null">
+        IsAutoIncrement = #{isAutoIncrement,jdbcType=TINYINT},
+      </if>
+      <if test="isUnique != null">
+        IsUnique = #{isUnique,jdbcType=TINYINT},
+      </if>
+      <if test="defaultValue != null">
+        DefaultValue = #{defaultValue,jdbcType=VARCHAR},
+      </if>
+      <if test="descirption != null">
+        Descirption = #{descirption,jdbcType=VARCHAR},
+      </if>
+      <if test="parentID != null">
+        ParentID = #{parentID,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null">
+        Sort = #{sort,jdbcType=TINYINT},
+      </if>
+      <if test="size != null">
+        Size = #{size,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{ID,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.aileen.lc.model.TSEntityField">
+    update TSEntityField
+    set Name = #{name,jdbcType=VARCHAR},
+      Title = #{title,jdbcType=VARCHAR},
+      DataType = #{dataType,jdbcType=VARCHAR},
+      ReferenceID = #{referenceID,jdbcType=VARCHAR},
+      IsPrimaryKey = #{isPrimaryKey,jdbcType=TINYINT},
+      IsNullable = #{isNullable,jdbcType=TINYINT},
+      IsAutoIncrement = #{isAutoIncrement,jdbcType=TINYINT},
+      IsUnique = #{isUnique,jdbcType=TINYINT},
+      DefaultValue = #{defaultValue,jdbcType=VARCHAR},
+      Descirption = #{descirption,jdbcType=VARCHAR},
+      ParentID = #{parentID,jdbcType=VARCHAR},
+      Sort = #{sort,jdbcType=TINYINT},
+      Size = #{size,jdbcType=INTEGER}
+    where ID = #{ID,jdbcType=VARCHAR}
+  </update>
+</mapper>
