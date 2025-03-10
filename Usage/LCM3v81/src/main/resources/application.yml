@@ -1,0 +1,41 @@
+
+server:
+  port: 8080
+
+
+datasourcemod:
+  mapper-locations:
+    remote: classpath:mapper/test1/*.xml
+    local: classpath:mapper/test2/*.xml
+  mapper-base-package:
+    remote: com.example.demo.mapper
+    local: com.example.demo.mapper
+  logic:
+    names: remote, local
+    maps:
+      remote: Remote
+      local: Local
+    default: Local
+  configuration:
+    cache-enabled: false
+    map-underscore-to-camel-case: false
+    call-setters-on-nulls: true
+    return-instance-for-empty-row: false
+
+datasourceset:
+  url: "http://192.168.8.13:8888/getDBList"
+  file: "datasourceSet.json"
+  driverClassName: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+  jdbcUrl: "jdbc:sqlserver://[ip]:[port];databaseName=[dbName]"
+  ip: "[ip]"
+  port: "[port]"
+  dbName: "[dbName]"
+  model: 2 # 0: file 1: http 2: http_file
+  extend:
+    file: "extendDataSourceSet.json"
+    mssql:
+      driverClassName: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+      jdbcUrl: "jdbc:sqlserver://[ip]:[port];databaseName=[dbName]"
+    mysql:
+      driverClassName: "com.mysql.jdbc.Driver"
+      jdbcUrl: "jdbc:mysql://[ip]:[port]/[dbName]?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC"
