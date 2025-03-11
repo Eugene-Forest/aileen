@@ -25,8 +25,6 @@ import java.util.Map;
 @Slf4j
 public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcessor, ApplicationContextAware {
 
-    //TODO: 这个组件是最开始的执行的组件
-
     private ApplicationContext applicationContext;
 
     private Environment environment;

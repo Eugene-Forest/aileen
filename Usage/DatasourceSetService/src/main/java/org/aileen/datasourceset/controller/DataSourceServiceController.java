@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  */
 @RequestMapping("/datasource")
 @RestController
-@EncryptRequest
+//@EncryptRequest
 public class DataSourceServiceController {
 
     @Autowired
