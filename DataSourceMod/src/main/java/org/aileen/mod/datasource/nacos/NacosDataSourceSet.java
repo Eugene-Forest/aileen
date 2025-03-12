@@ -7,29 +7,15 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * 绑定Nacos配置信息的对象
+ */
 @Component
 @RefreshScope
 @ConfigurationProperties(prefix = "datasource-set")
 public class NacosDataSourceSet {
 
-    private String url;
-
     private List<AccountSet> accountSets;
-
-    public NacosDataSourceSet() {
-    }
-
-    public NacosDataSourceSet(List<AccountSet> accountSets) {
-        this.accountSets = accountSets;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
 
     public List<AccountSet> getAccountSets() {
         return accountSets;

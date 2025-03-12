@@ -8,11 +8,11 @@ spring:
   profiles:
     active: private
 
-datasource-set:
-  url: "jdbc:sqlserver://192.168.8.13:1433;databaseName=test"
+#datasource-set:
+#  url: "jdbc:sqlserver://192.168.8.13:1433;databaseName=test"
 
 datasource-mod:
-  nacos-enable: false
+#  nacos-enable: false
   file-path: "/datasource/datasourceset.json"
   mapper-locations:
     remote: classpath:mapper/test1/*.xml
