@@ -1,13 +1,14 @@
 package org.aileen.mod.datasource;
 
+import org.aileen.mod.datasource.nacos.NacosDataSourceSet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 
-@EnableDiscoveryClient
+@EnableConfigurationProperties(NacosDataSourceSet.class)
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class}, scanBasePackages = {"org.aileen"})
 public class DataSourceApp {
     public static void main(String[] args) {

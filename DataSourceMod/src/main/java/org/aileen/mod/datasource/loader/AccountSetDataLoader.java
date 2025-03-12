@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.aileen.mod.datasource.model.AccountSet;
-import org.aileen.mod.datasource.nacos.NacosConfigFetcher;
+import org.aileen.mod.datasource.model.DataSourceSet;
+import org.aileen.mod.datasource.nacos.NacosDataSourceSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -21,10 +22,10 @@ import java.util.List;
 @Component
 public class AccountSetDataLoader {
 
-    @Value("${datasourcemod.nacos-enable:false}")
+    @Value("${datasource-mod.nacos-enable:false}")
     private boolean nacosEnable;
 
-    @Value("${datasourcemod.file-path}")
+    @Value("${datasource-mod.file-path}")
     private String filePath;
 
     @Autowired
@@ -34,16 +35,15 @@ public class AccountSetDataLoader {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private NacosConfigFetcher nacosConfigFetcher;
+    private NacosDataSourceSet nacosDataSourceSet;
 
-    private List<AccountSet> accountSets;
+    private DataSourceSet dataSourceSet;
     private void initDataSourceData4Local() {
         try {
             log.info("Loading configuration from local file: {}", filePath);
             // 从类路径下的资源文件加载配置
             Resource resource = resourceLoader.getResource("classpath:" + filePath);
-            accountSets = objectMapper.readValue(resource.getInputStream(), new TypeReference<List<AccountSet>>() {
-            });
+            dataSourceSet = objectMapper.readValue(resource.getInputStream(), new TypeReference<DataSourceSet>() {});
         } catch (IOException e) {
             log.error("Failed to load configuration from local file", e);
             throw new RuntimeException("Failed to load configuration from local file", e);
@@ -53,12 +53,15 @@ public class AccountSetDataLoader {
     /** 获取账套配置 */
     public List<AccountSet> getAccountSets() {
         if(nacosEnable){
-            return nacosConfigFetcher.getAccountSetsFromNacos();
+            log.debug("Get From Nacos!");
+            log.debug(nacosDataSourceSet.getUrl());
+            return nacosDataSourceSet.getAccountSets();
         }else{
-            if(accountSets == null){
+            log.debug("Get From Local!");
+            if(dataSourceSet == null){
                 initDataSourceData4Local();
             }
-            return accountSets;
+            return dataSourceSet.getAccountSets();
         }
     }
 
