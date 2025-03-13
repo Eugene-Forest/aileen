@@ -14,6 +14,7 @@
         <module>HttpClientMod</module>
         <module>DataSourceMod</module>
         <module>CommonMod</module>
+        <module>CryptoMod</module>
     </modules>
     <!-- 根模块打包类型必须为pom -->
     <packaging>pom</packaging>

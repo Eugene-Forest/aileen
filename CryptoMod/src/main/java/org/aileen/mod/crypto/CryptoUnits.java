@@ -1,6 +1,6 @@
-package org.aileen.mod.auth.units;
+package org.aileen.mod.crypto;
 
-import org.apache.tomcat.util.codec.binary.Base64;
+import org.aileen.mod.kit.Base64Kit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +71,7 @@ public class CryptoUnits {
             byte[] byteContent = content.getBytes(StandardCharsets.UTF_8);
             cipher.init(Cipher.ENCRYPT_MODE, key);// 初始化
             byte[] result = cipher.doFinal(byteContent);
-            return Base64.encodeBase64String(result); // 加密
+            return Base64Kit.encodeBase64String(result); // 加密
         } catch (Exception e) {
             log.error("加密异常", e);
         }
@@ -96,7 +96,7 @@ public class CryptoUnits {
      */
     public static String decrypt(String content, String password) {
         try {
-            byte[] contentByte = Base64.decodeBase64(content.getBytes(StandardCharsets.UTF_8));
+            byte[] contentByte = Base64Kit.decodeBase64(content.getBytes(StandardCharsets.UTF_8));
             KeyGenerator kgen = KeyGenerator.getInstance("AES");
             // 防止linux下 随机生成key
             SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
@@ -142,7 +142,7 @@ public class CryptoUnits {
             SecretKey secretKey = keyGenerator.generateKey();
             byte[] keyBytes = secretKey.getEncoded();
             log.debug("keyBytes length: " + keyBytes.length);
-            return Base64.encodeBase64String(keyBytes);
+            return Base64Kit.encodeBase64String(keyBytes);
         } catch (NoSuchAlgorithmException e) {
             log.error(e.getMessage());
         }
@@ -158,7 +158,7 @@ public class CryptoUnits {
      */
     public static String encryptWithByteKey(String sSrc, String key) {
         try {
-            String sKey = Base64.encodeBase64String(key.getBytes());
+            String sKey = Base64Kit.encodeBase64String(key.getBytes());
             if (sKey == null) {
                 log.error("encrypt - Key为空null");
                 return null;
@@ -170,7 +170,7 @@ public class CryptoUnits {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
             byte[] encrypted = cipher.doFinal(sSrc.getBytes(StandardCharsets.UTF_8));
-            return Base64.encodeBase64String(encrypted);
+            return Base64Kit.encodeBase64String(encrypted);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -186,7 +186,7 @@ public class CryptoUnits {
      */
     public static String decryptWithByteKey(String sSrc, String key) {
         try {
-            String sKey = Base64.encodeBase64String(key.getBytes());
+            String sKey = Base64Kit.encodeBase64String(key.getBytes());
             if (sKey == null) {
                 log.error("decrypt - Key为空null");
                 return null;
@@ -195,7 +195,7 @@ public class CryptoUnits {
             SecretKey skeySpec = new SecretKeySpec(raw, 0, raw.length, "AES");
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, skeySpec);
-            byte[] encrypted1 = Base64.decodeBase64(sSrc.getBytes(StandardCharsets.UTF_8));
+            byte[] encrypted1 = Base64Kit.decodeBase64(sSrc.getBytes(StandardCharsets.UTF_8));
             byte[] original = cipher.doFinal(encrypted1);
             return new String(original, StandardCharsets.UTF_8);
         } catch (Exception e) {

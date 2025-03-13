@@ -1,8 +1,6 @@
-package org.aileen.mod.auth.common;
+package org.aileen.mod.crypto;
 
-import org.aileen.mod.auth.entity.SignKey;
-import org.aileen.mod.auth.units.SignKeyUnits;
-import org.apache.tomcat.util.codec.binary.Base64;
+import org.aileen.mod.kit.Base64Kit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +80,7 @@ public class SignKeyCommon {
             //读取私匙字符串
             String privatekeyString = FileHelper.readTextFile(privateKeyFile);
             //从私匙字符串中获取私匙
-            byte[] privateBytes = Base64.decodeBase64(privatekeyString.getBytes(StandardCharsets.UTF_8));
+            byte[] privateBytes = Base64Kit.decodeBase64(privatekeyString.getBytes(StandardCharsets.UTF_8));
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateBytes);
             KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
             return keyFactory.generatePrivate(keySpec);
@@ -118,7 +116,7 @@ public class SignKeyCommon {
             // 获取公匙字符串
             String publicKeyString = FileHelper.readTextFile(publicKeyFile);
             // 通过公匙字符串获取公匙
-            byte[] publicKeyBytes = Base64.decodeBase64(publicKeyString.getBytes(StandardCharsets.UTF_8));
+            byte[] publicKeyBytes = Base64Kit.decodeBase64(publicKeyString.getBytes(StandardCharsets.UTF_8));
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
             return keyFactory.generatePublic(keySpec);

@@ -1,8 +1,6 @@
-package org.aileen.mod.auth.units;
+package org.aileen.mod.crypto;
 
-import org.aileen.mod.auth.common.SignKeyCommon;
-import org.aileen.mod.auth.entity.SignKey;
-import org.apache.tomcat.util.codec.binary.Base64;
+import org.aileen.mod.kit.Base64Kit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +42,8 @@ public class SignKeyUnits {
             Key publicKey = keyPair.getPublic();
             //得到密匙
             Key privateKey = keyPair.getPrivate();
-            String privateKeyString = Base64.encodeBase64String(privateKey.getEncoded());
-            String publicKeyString = Base64.encodeBase64String(publicKey.getEncoded());
+            String privateKeyString = Base64Kit.encodeBase64String(privateKey.getEncoded());
+            String publicKeyString = Base64Kit.encodeBase64String(publicKey.getEncoded());
             //创建密匙对对象
             SignKey signKey = new SignKey();
             signKey.setPrivateKey(privateKeyString);
@@ -86,7 +84,7 @@ public class SignKeyUnits {
             signature.initSign(privateKey);
             signature.update(data.getBytes(StandardCharsets.UTF_8));
             byte[] signatureBytes = signature.sign();
-            return Base64.encodeBase64String(signatureBytes);
+            return Base64Kit.encodeBase64String(signatureBytes);
         } catch (NoSuchAlgorithmException e) {
             log.error("签名方法 使用了非法加密算法！");
         } catch (InvalidKeyException e) {
@@ -126,7 +124,7 @@ public class SignKeyUnits {
             Signature signature = Signature.getInstance(Sign_Algorithm);
             signature.initVerify(publicKey);
             signature.update(data.getBytes(StandardCharsets.UTF_8));
-            byte[] signBytes = Base64.decodeBase64(sign.getBytes(StandardCharsets.UTF_8));
+            byte[] signBytes = Base64Kit.decodeBase64(sign.getBytes(StandardCharsets.UTF_8));
             return signature.verify(signBytes);
         } catch (NoSuchAlgorithmException e) {
             log.error("验签方法 使用了非法加密算法！");
@@ -164,7 +162,7 @@ public class SignKeyUnits {
             Cipher cipher = Cipher.getInstance(Key_Algorithm);
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             byte[] enBytes = cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
-            return Base64.encodeBase64String(enBytes);
+            return Base64Kit.encodeBase64String(enBytes);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             log.error("加密方法 使用了非法加密算法！");
         } catch (InvalidKeyException e) {
@@ -200,7 +198,7 @@ public class SignKeyUnits {
             }
             Cipher cipher = Cipher.getInstance(Key_Algorithm);
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
-            byte[] enBytes = cipher.doFinal(Base64.decodeBase64(encryptedData));
+            byte[] enBytes = cipher.doFinal(Base64Kit.decodeBase64(encryptedData.getBytes()));
             return new String(enBytes, StandardCharsets.UTF_8);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             log.error("解密方法 使用了非法加密算法！");

@@ -3,7 +3,7 @@ package org.aileen.mod.auth.interceptor;
 import org.aileen.mod.auth.anno.EncryptRequest;
 import org.aileen.mod.auth.enums.RequestEncryptType;
 import org.aileen.mod.auth.units.AnnoUnits;
-import org.aileen.mod.auth.units.CryptoUnits;
+import org.aileen.mod.crypto.CryptoUnits;
 import org.aileen.mod.auth.verify.DefaultVerifySign;
 import org.aileen.mod.redis.RedisUtil;
 import org.slf4j.Logger;

@@ -1,6 +1,6 @@
-import org.aileen.mod.auth.common.SignKeyCommon;
-import org.aileen.mod.auth.units.CryptoUnits;
-import org.aileen.mod.auth.units.SignKeyUnits;
+import org.aileen.mod.crypto.SignKeyCommon;
+import org.aileen.mod.crypto.CryptoUnits;
+import org.aileen.mod.crypto.SignKeyUnits;
 
 /**
  * 此用例需要Sign项目为Root，才能正常搜索到密匙文件（搜索文件的逻辑是相对目录），主要根据Idea打开的项目的根目录为准

@@ -1,4 +1,4 @@
-package org.aileen.mod.auth.entity;
+package org.aileen.mod.crypto;
 
 /**
  * @author Eugene-Forest

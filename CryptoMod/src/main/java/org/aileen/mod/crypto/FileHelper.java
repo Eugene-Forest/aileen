@@ -1,4 +1,4 @@
-package org.aileen.mod.auth.common;
+package org.aileen.mod.crypto;
 
 import java.io.*;
 

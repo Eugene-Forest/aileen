@@ -3,8 +3,8 @@ package org.aileen.mod.auth.entity;
 
 import com.alibaba.fastjson.JSON;
 import org.aileen.mod.auth.enums.RequestEncryptType;
-import org.aileen.mod.auth.units.CryptoUnits;
-import org.aileen.mod.auth.units.SignKeyUnits;
+import org.aileen.mod.crypto.CryptoUnits;
+import org.aileen.mod.crypto.SignKeyUnits;
 import org.aileen.mod.kit.Base64Kit;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
