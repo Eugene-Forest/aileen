@@ -1,37 +1,35 @@
-import org.aileen.mod.crypto.SignKeyCommon;
 import org.aileen.mod.crypto.CryptoUnits;
+import org.aileen.mod.crypto.SignKeyCommon;
 import org.aileen.mod.crypto.SignKeyUnits;
+import org.junit.jupiter.api.Test;
 
 /**
  * 此用例需要Sign项目为Root，才能正常搜索到密匙文件（搜索文件的逻辑是相对目录），主要根据Idea打开的项目的根目录为准
+ *
  * @author Eugene-Forest
  * {@code @date} 2024/11/27
  */
 public class TestSignKeyMain {
-    public static void main(String[] args) {
-//        createTestKey();
-//        simpleSign();
-//        encryptData();
-        encryptDataAES();
-        encryptDataAESWithPassword();
-    }
+
 
     /**
      * 测试创建测试用密匙对
      */
-    public static void createTestKey(){
+    @Test
+    public void createTestKey() {
         SignKeyCommon.createSignKey("TestKey");
     }
 
     /**
      * 简单的数据签名和验签机制测试
      */
-    public static void simpleSign(){
+    @Test
+    public void simpleSign() {
         //数据
         String data = "hello world";
         //签名
         String sign = SignKeyUnits.defaultSignMessage(data);
-        System.out.println("签名数据："+ sign);
+        System.out.println("签名数据：" + sign);
         //然后根据公匙进行数据的验签
         System.out.println(SignKeyUnits.defaultVerifyMessage("hello world!", sign));//false
         System.out.println(SignKeyUnits.defaultVerifyMessage("hello world", sign));//true
@@ -42,7 +40,8 @@ public class TestSignKeyMain {
         // 所以，签名机制还可以从加密请求内容的角度进行优化。
     }
 
-    public static void encryptData(){
+    @Test
+    public void encryptData() {
         String data = "hello world";
         String encryptedData = SignKeyUnits.defaultEncryptMessage(data);
         System.out.println("加密后数据: " + encryptedData);
@@ -51,7 +50,18 @@ public class TestSignKeyMain {
         System.out.println(data.equals(message));
     }
 
-    public static void encryptDataAES(){
+    @Test
+    public void encryptDataAESDefault(){
+        String data = "1244303915@PengWQ";
+        String encryptedData = CryptoUnits.defaultEncrypt(data);
+        System.out.println("加密后数据: " + encryptedData);
+        String message = CryptoUnits.defaultDecrypt(encryptedData);
+        System.out.println("解密后数据: " + message);
+        assert data.equals(message);
+    }
+
+    @Test
+    public void encryptDataAES() {
         String data = "hello world";
         String key_AES = CryptoUnits.generateByteKey();
         assert key_AES != null;
@@ -62,7 +72,8 @@ public class TestSignKeyMain {
         System.out.println("解密数据: " + message);
     }
 
-    public static void encryptDataAESWithPassword(){
+    @Test
+    public void encryptDataAESWithPassword() {
         try {
             String data = "hello world";
 //            String deData = AESUnits.encryptAES(data);
@@ -75,10 +86,11 @@ public class TestSignKeyMain {
             System.out.println("加密数据 : " + encodeMessage);
             String deCodeMessage = CryptoUnits.decrypt(encodeMessage, password);
             System.out.println("解密数据：" + deCodeMessage);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
 
 }
