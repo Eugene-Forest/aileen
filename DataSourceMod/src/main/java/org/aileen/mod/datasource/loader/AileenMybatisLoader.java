@@ -1,9 +1,11 @@
-package org.aileen.mod.datasource.config;
+package org.aileen.mod.datasource.loader;
 
 import lombok.extern.slf4j.Slf4j;
-import org.aileen.mod.datasource.units.TCBeanUnit;
+import org.aileen.mod.datasource.units.AileenBeanUnit;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.util.*;
@@ -13,10 +15,12 @@ import java.util.*;
  * {@code @date} 2024/11/20
  */
 @Slf4j
-public class TCMybatisConfig {
+@Component
+public class AileenMybatisLoader {
 
     private Environment environment;
-    private TCBeanUnit tcBeanUnit;
+
+    private AileenBeanUnit aileenBeanUnit;
 
     private final String logicNames = "datasourcemod.logic.names";
     private final String logicMap = "datasourcemod.logic.maps.";
@@ -25,25 +29,33 @@ public class TCMybatisConfig {
     private final String mybatisBasePackage = "datasourcemod.mapper-base-package.";
 
 
-
     private List<String> dataSourceNames;
-    private Map<String,String> logicNameMap;
+    private Map<String, String> logicNameMap;
 
-    public TCMybatisConfig(Environment environment, TCBeanUnit tcBeanUnit) {
+    @Autowired
+    public AileenMybatisLoader(Environment environment, AileenBeanUnit aileenBeanUnit) {
         this.environment = environment;
-        this.tcBeanUnit = tcBeanUnit;
+        this.aileenBeanUnit = aileenBeanUnit;
     }
 
     public void init() {
         log.info("-- DataSourceMod MybatisConfig --");
         Map<String, String> logicNameMap = getLogicNameMap();
-        for(String logicName: logicNameMap.keySet()){
+        for (String logicName : logicNameMap.keySet()) {
+            log.info("-- init {} DataSource --", logicName);
             //读取配置
             String mapperLocations = environment.getProperty(mybatisLocation + logicName);
             String mapperBasePackage = environment.getProperty(mybatisBasePackage + logicName);
 
             //创建数据源
 
+            //拦截器
+
+            //sqlSessionFactory
+
+            //注册bean
+
+            //MapperScanner
         }
     }
 
@@ -61,7 +73,7 @@ public class TCMybatisConfig {
     }
 
     public Map<String, String> getLogicNameMap() {
-        if(logicNameMap != null){
+        if (logicNameMap != null) {
             return logicNameMap;
         }
         String[] namesArray = environment.getProperty(logicNames, String[].class);
@@ -75,10 +87,10 @@ public class TCMybatisConfig {
     }
 
     public List<String> getDataSourceNames() {
-        if(dataSourceNames != null){
+        if (dataSourceNames != null) {
             return dataSourceNames;
         }
-        String[] namesArray  = environment.getProperty(default_dataSource, String[].class);
+        String[] namesArray = environment.getProperty(default_dataSource, String[].class);
         dataSourceNames = namesArray != null ? Arrays.asList(namesArray) : new ArrayList<>();
         return dataSourceNames;
     }

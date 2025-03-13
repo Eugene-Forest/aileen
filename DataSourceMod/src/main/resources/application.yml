@@ -50,4 +50,3 @@ datasource-mod:
 logging:
   level:
     org.aileen: debug
-    org。springframework。boot.context.properties: DEBUG

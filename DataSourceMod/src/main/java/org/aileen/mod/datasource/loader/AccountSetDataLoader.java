@@ -1,10 +1,11 @@
 package org.aileen.mod.datasource.loader;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.aileen.mod.datasource.model.AccountSet;
-import org.aileen.mod.datasource.nacos.NacosDataSourceSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -62,6 +63,17 @@ public class AccountSetDataLoader {
             return dataSourceSetLocal.getDataSourceSet().getAccountSets();
         }
     }
+}
+
+@Data
+class DataSourceSetLocal {
+    @JsonProperty("datasource-set")
+    private DataSourceSet dataSourceSet;
+}
+
+@Data
+class DataSourceSet {
+    private List<AccountSet> accountSets;
 }
 
 

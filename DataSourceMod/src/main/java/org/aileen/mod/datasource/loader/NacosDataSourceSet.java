@@ -1,4 +1,4 @@
-package org.aileen.mod.datasource.nacos;
+package org.aileen.mod.datasource.loader;
 
 import org.aileen.mod.datasource.model.AccountSet;
 import org.springframework.boot.context.properties.ConfigurationProperties;

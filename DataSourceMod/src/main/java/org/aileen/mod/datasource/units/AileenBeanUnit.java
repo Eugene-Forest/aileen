@@ -8,15 +8,18 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
 /**
+ * Bean 工具类
  * @author Eugene-Forest
  * {@code @date} 2024/11/19
  */
 @Slf4j
-public class TCBeanUnit implements ApplicationContextAware {
+@Component
+public class AileenBeanUnit implements ApplicationContextAware {
 
-    private static ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -29,7 +32,7 @@ public class TCBeanUnit implements ApplicationContextAware {
      * @param beanName       Bean 名称
      * @param singletonObject 单例对象
      */
-    public static void registerSingleton(String beanName, Object singletonObject) {
+    public void registerSingleton(String beanName, Object singletonObject) {
         try {
             DefaultListableBeanFactory beanFactory = getBeanFactory();
             beanFactory.registerSingleton(beanName, singletonObject);
@@ -44,7 +47,7 @@ public class TCBeanUnit implements ApplicationContextAware {
      * @param beanName      Bean 名称
      * @param requiredType  Bean 类型
      */
-    public static void registerBeanDefinition(String beanName, Class<?> requiredType) {
+    public void registerBeanDefinition(String beanName, Class<?> requiredType) {
         try {
             DefaultListableBeanFactory beanFactory = getBeanFactory();
             beanFactory.registerBeanDefinition(beanName, beanFactory.getBeanDefinition(requiredType.getName()));
@@ -62,7 +65,7 @@ public class TCBeanUnit implements ApplicationContextAware {
      * @return              Bean 实例
      */
     @Nullable
-    public static <T> T getBean(String beanName, Class<T> requiredType) {
+    public <T> T getBean(String beanName, Class<T> requiredType) {
         if (applicationContext == null) {
             return null;
         }
@@ -82,7 +85,7 @@ public class TCBeanUnit implements ApplicationContextAware {
      * @return              Bean 实例
      */
     @Nullable
-    public static <T> T getBean(Class<T> requiredType) {
+    public <T> T getBean(Class<T> requiredType) {
         if (applicationContext == null) {
             return null;
         }
@@ -110,7 +113,7 @@ public class TCBeanUnit implements ApplicationContextAware {
      * @return DefaultListableBeanFactory 实例
      */
     @Nullable
-    private static DefaultListableBeanFactory getBeanFactory() {
+    private DefaultListableBeanFactory getBeanFactory() {
         if (applicationContext == null) {
             return null;
         }
