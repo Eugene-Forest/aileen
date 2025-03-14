@@ -1,29 +1,26 @@
 package org.aileen.mod.datasource.dynamic;
 
+import org.aileen.mod.datasource.loader.DataSourceLoader;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
-import javax.sql.DataSource;
+import java.util.Set;
 
 public class DynamicDataSource extends AbstractRoutingDataSource {
 
-    private String logicName;
-    private String dataSourceName;
+    private String aliasName;
+    private Set<String> accountSetNames;
 
-//    public DynamicDataSource(String logicName, String dataSourceName) {
-//        this.logicName = logicName;
-//        this.dataSourceName = dataSourceName;
-//    }
-
+    public DynamicDataSource(String dbAliasName, Set<String> accountSetNames) {
+        this.aliasName = dbAliasName;
+        this.accountSetNames = accountSetNames;
+    }
 
     @Override
     protected Object determineCurrentLookupKey() {
-        return DataSourceContextHolder.getDataSource();
+        return DataSourceLoader.getDataSource();
     }
 
-
-//    @Override
-//    protected DataSource determineTargetDataSource() {
-//        //TODO
-//        return super.determineTargetDataSource();
-//    }
+    public String getDbAliasName() {
+        return aliasName;
+    }
 }

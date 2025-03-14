@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.aileen.mod.datasource.databind.NacosDataSourceSet;
 import org.aileen.mod.datasource.model.AccountSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
 
@@ -38,6 +40,17 @@ public class AccountSetDataLoader {
     private NacosDataSourceSet nacosDataSourceSet;
 
     private DataSourceSetLocal dataSourceSetLocal;
+
+    @PostConstruct
+    public void init(){
+        List<AccountSet> accountSets = getAccountSets();
+        try {
+            log.debug(objectMapper.writeValueAsString(accountSets));
+        }catch (Exception e){
+            log.error("Failed to load configuration ", e);
+        }
+    }
+
     private void initDataSourceData4Local() {
         try {
             log.info("Loading configuration from local file: {}", filePath);

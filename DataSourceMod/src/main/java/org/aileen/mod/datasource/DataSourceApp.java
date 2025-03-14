@@ -1,6 +1,6 @@
 package org.aileen.mod.datasource;
 
-import org.aileen.mod.datasource.loader.NacosDataSourceSet;
+import org.aileen.mod.datasource.databind.NacosDataSourceSet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
