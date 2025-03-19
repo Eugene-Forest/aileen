@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Eugene-Forest
@@ -52,13 +53,15 @@ public class AileenMybatisConfig {
     private final String config = "datasource-mod.config";
 
     private List<String> dataSourceNames;
-    /** key: dbName, value: alias name */
-    private Map<String, String> logicNameMap;
 
+    /**
+     * key: dbName, value: alias name
+     */
+//    private Map<String, String> logicNameMap;
     @PostConstruct
     public void init() {
         log.info("-- DataSourceMod MybatisConfig init --");
-        Map<String, String> logicNameMap = getLogicNameMap();
+//        Map<String, String> logicNameMap = getLogicNameMap();
         // 在创建数据源之前，检查账套数据与配置文件是否构成合理映射
 
         // 一个Map对应一个Dy
@@ -91,30 +94,48 @@ public class AileenMybatisConfig {
         }
     }
 
-    private DataSource createDataSource(String aliasName, Set<String> dataSourceNames) {
-        List<AccountSet> accountSets = accountSetDataLoader.getAccountSets();
-        DynamicDataSource dataSource = new DynamicDataSource(aliasName, dataSourceNames);
+    /**
+     * 用来检查账套配置和Xml配置是否合理映射
+     */
+    private boolean checkAccountSetAndConfig() {
 
+
+
+        return true;
+    }
+
+
+    private DataSource createDataSource(String dataSourceName, String defaultAccount) {
+        List<AccountSet> accountSets = accountSetDataLoader.getAccountSets();
+        Set<String> accountSetNames = accountSets.stream()
+                .map(AccountSet::getAccountSetName)
+                .collect(Collectors.toSet());
+        if (!accountSetNames.contains(defaultAccount)) {
+            log.error("{} 默认账套不在可选账套范围内！。", defaultAccount);
+            throw new Exception("");
+        }
+        DynamicDataSource dynamicDataSource = new DynamicDataSource(dataSourceName, accountSetNames);
+        DataSource defaultDataSource = null;
         Map<Object, Object> targetDataSources = new HashMap<>();
 
-        for (String dataSourceName : dataSourceNames) {
-            String aliasDbName = logicNameMap.get(dataSourceName);
-
+        for (AccountSet accountSet : accountSets) {
             HikariConfig config = new HikariConfig();
             config.setJdbcUrl("jdbc:sqlserver://192.168.8.13:1433;databaseName=test");
             config.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             config.setUsername("sa");
             config.setPassword("");
-            return new HikariDataSource(config);
+            HikariDataSource dataSource = new HikariDataSource(config);
 
-//            targetDataSources.put("master", masterDataSource());
+            targetDataSources.put(accountSet.getAccountSetName(), dataSource);
+            if (accountSet.getAccountSetName().equals(defaultAccount)) {
+                defaultDataSource = dataSource;
+            }
         }
 
-        dataSource.setTargetDataSources(targetDataSources);
-//        dataSource.setDefaultTargetDataSource();
-        return dataSource;
+        dynamicDataSource.setTargetDataSources(targetDataSources);
+        dynamicDataSource.setDefaultTargetDataSource(defaultDataSource);
+        return dynamicDataSource;
     }
-
 
 
     private String register(String logicName, DataSource dataSource) {
@@ -122,15 +143,15 @@ public class AileenMybatisConfig {
         return null;//beanName
     }
 
-    private String register(String logicName, SqlSessionFactory sqlSessionFactory){
+    private String register(String logicName, SqlSessionFactory sqlSessionFactory) {
         return null;
     }
 
-    private String register(String logicName, SqlSessionTemplate sqlSessionTemplate){
+    private String register(String logicName, SqlSessionTemplate sqlSessionTemplate) {
         return null;
     }
 
-    private String register(String logicName, DataSourceTransactionManager dataSourceTransactionManager){
+    private String register(String logicName, DataSourceTransactionManager dataSourceTransactionManager) {
         return null;
     }
 
@@ -139,20 +160,26 @@ public class AileenMybatisConfig {
         return null;
     }
 
-    public Map<String, String> getLogicNameMap() {
-        if (logicNameMap != null) {
-            return logicNameMap;
-        }
-        String[] namesArray = environment.getProperty(logicNames, String[].class);
-        List<String> names = namesArray != null ? Arrays.asList(namesArray) : new ArrayList<>();
-        logicNameMap = new HashMap<>();
-        for (String name : names) {
-            String logicName = environment.getProperty(logicMap + name);
-            logicNameMap.put(name, logicName);
-        }
-        return logicNameMap;
-    }
+    /**
+     * 获取数据源名称与逻辑名称的映射关系, key: dataSourceName, value: logicName
+     */
+//    public Map<String, String> getLogicNameMap() {
+//        if (logicNameMap != null) {
+//            return logicNameMap;
+//        }
+//        String[] namesArray = environment.getProperty(logicNames, String[].class);
+//        List<String> names = namesArray != null ? Arrays.asList(namesArray) : new ArrayList<>();
+//        logicNameMap = new HashMap<>();
+//        for (String name : names) {
+//            String logicName = environment.getProperty(logicMap + name);
+//            logicNameMap.put(name, logicName);
+//        }
+//        return logicNameMap;
+//    }
 
+    /**
+     * 获取数据源名称
+     */
     public List<String> getDataSourceNames() {
         if (dataSourceNames != null) {
             return dataSourceNames;

@@ -6,12 +6,13 @@ import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 import java.util.Set;
 
 public class DynamicDataSource extends AbstractRoutingDataSource {
-
-    private String aliasName;
+    /** 数据源名称 */
+    private String dataSourceName;
+    /** 账套名 */
     private Set<String> accountSetNames;
 
     public DynamicDataSource(String dbAliasName, Set<String> accountSetNames) {
-        this.aliasName = dbAliasName;
+        this.dataSourceName = dbAliasName;
         this.accountSetNames = accountSetNames;
     }
 
@@ -20,7 +21,7 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
         return DataSourceLoader.getDataSource();
     }
 
-    public String getDbAliasName() {
-        return aliasName;
+    public String getDataSourceName() {
+        return dataSourceName;
     }
 }

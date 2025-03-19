@@ -15,20 +15,20 @@ datasource-mod:
 #  nacos-enable: false
   file-path: "/datasource/datasourceset.json"
   mapper-locations:
-    remote: classpath:mapper/test1/*.xml
-    local: classpath:mapper/test2/*.xml
+    d1: classpath:mapper/test1/*.xml
+    d2: classpath:mapper/test2/*.xml
   mapper-base-package:
-    remote: com.example.demo.mapper
-    local: com.example.demo.mapper
+    d1: com.example.demo.mapper
+    d2: com.example.demo.mapper
   logic:
     # names 用来记录所有的数据源名称
-    names: remote, local
-    # maps 用来记录数据源名称和数据源别名
-    maps:
-      remote: R
-      local: L
-    # 默认数据源别名
-    default: L
+    names: d1, d2
+#    # maps 用来记录数据源名称和数据源别名
+#    maps:
+#      remote: R
+#      local: L
+    # 默认账套
+    default: remote
   mybatis-config:
     cache-enabled: false
     map-underscore-to-camel-case: false
