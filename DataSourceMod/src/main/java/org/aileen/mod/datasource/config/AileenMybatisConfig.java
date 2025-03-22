@@ -54,6 +54,7 @@ public class AileenMybatisConfig {
 
     private List<String> dataSourceNames;
 
+    private String defaultAccount;
     /**
      * key: dbName, value: alias name
      */
@@ -97,12 +98,21 @@ public class AileenMybatisConfig {
     /**
      * 用来检查账套配置和Xml配置是否合理映射
      */
-    private boolean checkAccountSetAndConfig() {
-
-
-
-        return true;
-    }
+//    private boolean checkAccountSetAndConfig() {
+//        //最少有一个账套，而数据源则对应实际的配置进行判断，同样也必须要有至少一个数据源
+//        //首先，检查数据源配置是否合理
+//        // * 通过数据源列表配置，查询所有的 xml、mapper 是否对应且有效
+//        List<AccountSet> accountSets = accountSetDataLoader.getAccountSets();
+//        Set<String> accountSetNames = accountSets.stream()
+//                .map(AccountSet::getAccountSetName)
+//                .collect(Collectors.toSet());
+//        if (!accountSetNames.contains(defaultAccount)) {
+//            log.error("{} 默认账套不在可选账套范围内！。", defaultAccount);
+//            throw new Exception("");
+//        }
+//
+//        return true;
+//    }
 
 
     private DataSource createDataSource(String dataSourceName, String defaultAccount) {
@@ -110,10 +120,6 @@ public class AileenMybatisConfig {
         Set<String> accountSetNames = accountSets.stream()
                 .map(AccountSet::getAccountSetName)
                 .collect(Collectors.toSet());
-        if (!accountSetNames.contains(defaultAccount)) {
-            log.error("{} 默认账套不在可选账套范围内！。", defaultAccount);
-            throw new Exception("");
-        }
         DynamicDataSource dynamicDataSource = new DynamicDataSource(dataSourceName, accountSetNames);
         DataSource defaultDataSource = null;
         Map<Object, Object> targetDataSources = new HashMap<>();
@@ -187,5 +193,23 @@ public class AileenMybatisConfig {
         String[] namesArray = environment.getProperty(logicNames, String[].class);
         dataSourceNames = namesArray != null ? Arrays.asList(namesArray) : new ArrayList<>();
         return dataSourceNames;
+    }
+
+    public String getDefaultAccount() {
+        if(defaultAccount != null){
+            return defaultAccount;
+        }
+        String defaultAccountName = environment.getProperty(default_dataSource);
+        List<AccountSet> accountSets = accountSetDataLoader.getAccountSets();
+        AccountSet account = accountSets.stream()
+                .filter(accountSet -> accountSet.getAccountSetName().equals(defaultAccountName))
+                .findFirst().orElse(null);
+        if(account == null){
+            account = accountSets.get(0);
+            defaultAccount = account.getAccountSetName();
+        }else{
+            defaultAccount = defaultAccountName;
+        }
+        return defaultAccount;
     }
 }
