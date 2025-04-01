@@ -1,6 +1,7 @@
 package org.aileen.mod.datasource.model;
 
 import lombok.Data;
+import org.aileen.mod.crypto.CryptoUnits;
 
 /**
  * @author Eugene-Forest
@@ -17,4 +18,17 @@ public class DataSourceData {
     private String DBUser;
     private String DBPassword;
     public DataSourceData() {}
+
+
+    public String getDBServer() {
+        return CryptoUnits.defaultDecrypt(DBServer);
+    }
+//
+//    public String getDBUser() {
+//        return CryptoUnits.defaultDecrypt(DBUser);
+//    }
+
+    public String getDBPassword() {
+        return CryptoUnits.defaultDecrypt(DBPassword);
+    }
 }

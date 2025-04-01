@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.aileen.mod.datasource.databind.NacosDataSourceSet;
 import org.aileen.mod.datasource.model.AccountSet;
+import org.aileen.mod.datasource.model.DataSourceData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -15,7 +16,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 账套资源载入
@@ -40,6 +44,8 @@ public class AccountSetDataLoader {
     private NacosDataSourceSet nacosDataSourceSet;
 
     private DataSourceSetLocal dataSourceSetLocal;
+
+    private Map<String, Map<String, DataSourceData>> allDataSourceData = new HashMap<>();
 
     @PostConstruct
     public void init(){
@@ -75,6 +81,32 @@ public class AccountSetDataLoader {
             }
             return dataSourceSetLocal.getDataSourceSet().getAccountSets();
         }
+    }
+
+    public String getDefaultAccountSetName(){
+        for(AccountSet accountSet : getAccountSets()){
+            if(accountSet.getIsDefault()){
+                return accountSet.getAccountSetName();
+            }
+        }
+        return null;
+    }
+
+    public Map<String, DataSourceData> getDataSourceDataMap(String dbId){
+        if(allDataSourceData.containsKey(dbId)){
+            return allDataSourceData.get(dbId);
+        }
+        Map<String, DataSourceData> dataSourceDataMap = new HashMap<>();
+        for(AccountSet accountSet : getAccountSets()){
+            for (DataSourceData data : accountSet.getData()){
+                if(data.getDBId().equals(dbId)){
+                    dataSourceDataMap.put(accountSet.getAccountSetName(), data);
+                    break;
+                }
+            }
+        }
+        allDataSourceData.put(dbId, dataSourceDataMap);
+        return dataSourceDataMap;
     }
 }
 

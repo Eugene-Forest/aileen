@@ -52,7 +52,7 @@ public class TestSignKeyMain {
 
     @Test
     public void encryptDataAESDefault(){
-        String data = "1244303915@PengWQ";
+        String data = "hello";
         String encryptedData = CryptoUnits.defaultEncrypt(data);
         System.out.println("加密后数据: " + encryptedData);
         String message = CryptoUnits.defaultDecrypt(encryptedData);

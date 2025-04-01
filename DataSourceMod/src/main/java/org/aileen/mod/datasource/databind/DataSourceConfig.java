@@ -9,13 +9,12 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "datasource-mod.config")
 public class DataSourceConfig {
-    private String ip;
-    private String port;
+    private String dbServer;
     private String dbName;
     private DriverComConfig mssql;
     private DriverComConfig mysql;
 
-    public String getJdbcUrl(String dbType, String ip, String port, String dbName) {
+    public String getJdbcUrl(String dbType, String dbServer, String dbName) {
         DBType type = DBType.getDBType(dbType);
         String url = null;
         switch (type){
@@ -28,7 +27,7 @@ public class DataSourceConfig {
                 break;
             }
         }
-        return url.replace(this.ip, ip).replace(this.port, port).replace(this.dbName, dbName);
+        return url.replace(this.dbServer, dbServer).replace(this.dbName, dbName);
     }
 
     public String getDriverClassName(String dbType) {

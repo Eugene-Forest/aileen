@@ -15,6 +15,8 @@ public class AccountSet {
     private String AccountSetName;
     /** 服务名 */
     private String ServiceName;
+    /** 是否默认 */
+    private Boolean IsDefault;
     /** 账套数据源 */
     private List<DataSourceData> data;
 }

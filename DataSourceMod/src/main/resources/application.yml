@@ -11,8 +11,9 @@ spring:
 #datasource-set:
 #  url: "jdbc:sqlserver://192.168.8.13:1433;databaseName=test"
 
+
 datasource-mod:
-#  nacos-enable: false
+  #  nacos-enable: false
   file-path: "/datasource/datasourceset.json"
   mapper-locations:
     d1: classpath:mapper/test1/*.xml
@@ -23,27 +24,26 @@ datasource-mod:
   logic:
     # names 用来记录所有的数据源名称
     names: d1, d2
-#    # maps 用来记录数据源名称和数据源别名
-#    maps:
-#      remote: R
-#      local: L
+    #    # maps 用来记录数据源名称和数据源别名
+    #    maps:
+    #      remote: R
+    #      local: L
     # 默认账套
-    default: remote
+    default: d1
   mybatis-config:
     cache-enabled: false
     map-underscore-to-camel-case: false
     call-setters-on-nulls: true
     return-instance-for-empty-row: false
   config:
-    ip: "[ip]"
-    port: "[port]"
+    dbServer: "[dbServer]"
     dbName: "[dbName]"
     mssql:
       driverClassName: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
-      jdbcUrl: "jdbc:sqlserver://[ip]:[port];databaseName=[dbName]"
+      jdbcUrl: "jdbc:sqlserver://[dbServer]:1433;databaseName=[dbName];encrypt=false;trustServerCertificate=true"
     mysql:
-      driverClassName: "com.mysql.jdbc.Driver"
-      jdbcUrl: "jdbc:mysql://[ip]:[port]/[dbName]?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC"
+      driverClassName: "com.mysql.cj.jdbc.Driver"
+      jdbcUrl: "jdbc:mysql://[dbServer]:3306/[dbName]?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true"
 
 logging:
   level:
