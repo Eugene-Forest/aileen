@@ -70,7 +70,7 @@ public class AileenMybatisConfig {
     @PostConstruct
     public void init() {
         try {
-            log.info("-- DataSourceMod MybatisConfig init --");
+            log.debug("-- DataSourceMod MybatisConfig init --");
 //        Map<String, String> logicNameMap = getLogicNameMap();
             // 在创建数据源之前，检查账套数据与配置文件是否构成合理映射
 
@@ -78,19 +78,12 @@ public class AileenMybatisConfig {
             // i一个Account对应一个Dy的Ele
             //
             for (String dsName : getDataSourceNames()) {
-                log.info("-- init {} DataSource --", dsName);
-                //读取配置
-//            String dataSourceNames = logicNameMap.get(dsName);
-                Set<String> dataSourceNameSet = new HashSet<>();
-//            if (StringUtils.isNotBlank(dataSourceNames)) {
-//                dataSourceNameSet.addAll(Arrays.asList(dataSourceNames.split(",")));
-//            }
-//            if (dataSourceNameSet.isEmpty()) {
-//                log.error("{} 账套不存在有效数据源定义。", dsName);
-//                continue;
-//            }
+                log.debug("-- Create {} DataSource --", dsName);
                 String mapperLocations = environment.getProperty(mybatisLocation + dsName);
                 String mapperBasePackage = environment.getProperty(mybatisBasePackage + dsName);
+                if(mapperLocations == null || mapperBasePackage == null){
+                    DataSourceModExceptionFactory.raiseException("没有定义 {} 数据源的Mapper扫描配置", dsName);
+                }
                 Resource[] mapperLocationResources = getMapperLocations(mapperLocations);
                 String defaultAccountSetName = accountSetDataLoader.getDefaultAccountSetName();
                 //创建数据源
@@ -109,8 +102,9 @@ public class AileenMybatisConfig {
                 //MapperScanner 扫描
                 MapperScannerConfigurer mapperScannerConfigurer = createMapperScannerConfigurer(mapperBasePackage, null, dsName);
                 mapperScannerConfigurer.postProcessBeanFactory(aileenBeanUnit.getDefaultListableBeanFactory());
-                log.info("-- init {} DataSource success --", dsName);
+                log.debug("-- Create {} DataSource success --", dsName);
             }
+            log.info("-- DataSourceMod MybatisConfig init success --");
         } catch (Throwable e) {
             log.error("-- DataSourceMod MybatisConfig init error --", e);
             throw DataSourceModExceptionFactory.raiseException("-- DataSourceMod MybatisConfig init error --");
@@ -188,9 +182,9 @@ public class AileenMybatisConfig {
         if (defaultDataSource == null) {
             DataSourceModExceptionFactory.raiseException("[{0}]不存在默认账套[{1}]的默认数据源定义。", dbId, defaultAccountSetName);
         }
-
         dynamicDataSource.setTargetDataSources(targetDataSources);
         dynamicDataSource.setDefaultTargetDataSource(defaultDataSource);
+        log.debug("Create DynamicDataSource Success For {} , has: {}", dbId, Arrays.toString(accountSetNames.toArray()));
         return dynamicDataSource;
     }
 
@@ -198,28 +192,28 @@ public class AileenMybatisConfig {
     private String register(String logicName, DataSource dataSource) {
         String beanName = "dataSource_" + logicName;
         aileenBeanUnit.registerSingleton(beanName, dataSource);
-        log.info("-- DataSourceMod MybatisConfig register DataSource [{}] --", beanName);
+        log.debug("-- DataSourceMod MybatisConfig register DataSource [{}] --", beanName);
         return beanName;
     }
 
     private String register(String logicName, SqlSessionFactory sqlSessionFactory) {
         String beanName = "sqlSessionFactory_" + logicName;
         aileenBeanUnit.registerSingleton(beanName, sqlSessionFactory);
-        log.info("-- DataSourceMod MybatisConfig register SqlSessionFactory [{}] --", beanName);
+        log.debug("-- DataSourceMod MybatisConfig register SqlSessionFactory [{}] --", beanName);
         return beanName;
     }
 
     private String register(String logicName, SqlSessionTemplate sqlSessionTemplate) {
         String beanName = "sqlSessionTemplate_" + logicName;
         aileenBeanUnit.registerSingleton(beanName, sqlSessionTemplate);
-        log.info("-- DataSourceMod MybatisConfig register SqlSessionTemplate [{}] --", beanName);
+        log.debug("-- DataSourceMod MybatisConfig register SqlSessionTemplate [{}] --", beanName);
         return beanName;
     }
 
     private String register(String logicName, DataSourceTransactionManager dataSourceTransactionManager) {
         String beanName = "dataSourceTransactionManager_" + logicName;
         aileenBeanUnit.registerSingleton(beanName, dataSourceTransactionManager);
-        log.info("-- DataSourceMod MybatisConfig register DataSourceTransactionManager [{}] --", beanName);
+        log.debug("-- DataSourceMod MybatisConfig register DataSourceTransactionManager [{}] --", beanName);
         return beanName;
     }
 
