@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -116,14 +117,15 @@ public class AileenMybatisConfig {
         }
     }
 
-    private Resource[] getMapperLocations(String mapperLocations) {
+    private Resource[] getMapperLocations(String mapperLocations) throws IOException {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         String[] mapperLocationsArr = mapperLocations.split(",");
-        Resource[] resources = new Resource[mapperLocationsArr.length];
+        List<Resource> resources = new ArrayList<>();
         for (int i = 0; i < mapperLocationsArr.length; i++) {
-            resources[i] = resolver.getResource(mapperLocationsArr[i].trim());
+            Resource[] resList = resolver.getResources(mapperLocationsArr[i].trim());
+            resources.addAll(Arrays.asList(resList));
         }
-        return resources;
+        return resources.toArray(new Resource[0]);
     }
 
     private MapperScannerConfigurer createMapperScannerConfigurer(String mapperBasePackage,
@@ -176,10 +178,6 @@ public class AileenMybatisConfig {
             config.setDriverClassName(dataSourceConfig.getDriverClassName(dataSourceData.getDBType()));
             config.setUsername(dataSourceData.getDBUser());
             config.setPassword(dataSourceData.getDBPassword());
-            log.debug(config.getJdbcUrl());
-            log.debug(config.getUsername());
-            log.debug(config.getPassword());
-            log.debug(config.getDriverClassName());
             HikariDataSource dataSource = new HikariDataSource(config);
 
             targetDataSources.put(accountSetName, dataSource);

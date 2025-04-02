@@ -66,9 +66,6 @@ public class AileenBeanUnit implements ApplicationContextAware {
      */
     @Nullable
     public <T> T getBean(String beanName, Class<T> requiredType) {
-        if (applicationContext == null) {
-            return null;
-        }
         try {
             return applicationContext.getBean(beanName, requiredType);
         } catch (BeansException e) {
@@ -86,9 +83,6 @@ public class AileenBeanUnit implements ApplicationContextAware {
      */
     @Nullable
     public <T> T getBean(Class<T> requiredType) {
-        if (applicationContext == null) {
-            return null;
-        }
         try {
             return applicationContext.getBean(requiredType);
         } catch (BeansException e) {
@@ -102,7 +96,6 @@ public class AileenBeanUnit implements ApplicationContextAware {
      *
      * @return DefaultListableBeanFactory 实例
      */
-    @Nullable
     public DefaultListableBeanFactory getDefaultListableBeanFactory() {
         return getBeanFactory();
     }
@@ -112,11 +105,7 @@ public class AileenBeanUnit implements ApplicationContextAware {
      *
      * @return DefaultListableBeanFactory 实例
      */
-    @Nullable
     private DefaultListableBeanFactory getBeanFactory() {
-        if (applicationContext == null) {
-            return null;
-        }
         ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) applicationContext;
         AutowireCapableBeanFactory autowireCapableBeanFactory = configurableApplicationContext.getAutowireCapableBeanFactory();
         return (DefaultListableBeanFactory) autowireCapableBeanFactory;
