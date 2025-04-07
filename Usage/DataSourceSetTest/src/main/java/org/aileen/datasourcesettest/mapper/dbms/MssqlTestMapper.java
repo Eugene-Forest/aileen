@@ -1,7 +1,9 @@
 package org.aileen.datasourcesettest.mapper.dbms;
 
 import org.aileen.datasourcesettest.model.MssqlTest;
+import org.apache.ibatis.annotations.Mapper;
 
+@Mapper
 public interface MssqlTestMapper {
     int deleteByPrimaryKey(Long id);
 

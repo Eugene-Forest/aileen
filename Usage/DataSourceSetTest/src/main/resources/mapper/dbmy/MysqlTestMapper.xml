@@ -19,7 +19,7 @@
     delete from MySqlTest
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="org.aileen.datasourcesettest.model.MysqlTest">
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="org.aileen.datasourcesettest.model.MysqlTest">
     insert into MySqlTest (id, name, age)
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{age,jdbcType=INTEGER})
   </insert>

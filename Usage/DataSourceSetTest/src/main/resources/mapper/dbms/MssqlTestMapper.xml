@@ -19,7 +19,7 @@
     delete from MssqlTest
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="org.aileen.datasourcesettest.model.MssqlTest">
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="org.aileen.datasourcesettest.model.MssqlTest">
     insert into MssqlTest (id, name, age)
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{age,jdbcType=INTEGER})
   </insert>

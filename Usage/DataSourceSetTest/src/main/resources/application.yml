@@ -19,8 +19,8 @@ datasource-mod:
     d1: classpath*:mapper/dbmy/*.xml
     d2: classpath*:mapper/dbms/*.xml
   mapper-base-package:
-    d1: com.example.mapper.dbmy
-    d2: com.example.mapper.dbms
+    d1: org.aileen.datasourcetest.mapper.dbmy
+    d2: org.aileen.datasourcetest.mapper.dbms
   logic:
     # names 用来记录所有的数据源名称
     names: d1, d2
