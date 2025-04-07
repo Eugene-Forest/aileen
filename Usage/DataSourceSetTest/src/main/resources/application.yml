@@ -7,7 +7,8 @@ spring:
     name: DataSourceModTest
   profiles:
     active: private
-
+#  main:
+#    lazy-initialization: true
 #datasource-set:
 #  url: "jdbc:sqlserver://192.168.8.13:1433;databaseName=test"
 
@@ -47,3 +48,4 @@ datasource-mod:
 logging:
   level:
     org.aileen: debug
+
