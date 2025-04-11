@@ -1,5 +1,8 @@
 package org.aileen.mod.datasource.loader;
 
+import com.alibaba.nacos.api.NacosFactory;
+import com.alibaba.nacos.api.config.ConfigService;
+import com.alibaba.nacos.api.exception.NacosException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,14 +37,22 @@ public class AccountSetDataLoader {
     @Value("${datasource-mod.file-path}")
     private String filePath;
 
+    @Value("${nacos.server-addr}")
+    private String nacosServerAddr;
+
+    @Value("${nacos.data-id}")
+    private String dataId;
+
+    @Value("${nacos.group}")
+    private String group;
+
+    private ConfigService configService;
+
     @Autowired
     private ResourceLoader resourceLoader;
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private NacosDataSourceSet nacosDataSourceSet;
 
     private DataSourceSetLocal dataSourceSetLocal;
 
@@ -51,6 +62,7 @@ public class AccountSetDataLoader {
     public void init(){
         List<AccountSet> accountSets = getAccountSets();
         try {
+            configService = NacosFactory.createConfigService(nacosServerAddr);
             log.debug(objectMapper.writeValueAsString(accountSets));
         }catch (Exception e){
             log.error("Failed to load configuration ", e);
@@ -69,11 +81,24 @@ public class AccountSetDataLoader {
         }
     }
 
+
+    private void initDataSourceData4Nacos() {
+        try {
+            configService = NacosFactory.createConfigService(nacosServerAddr);
+            log.info("Loading configuration from Nacos");
+            String configContent = configService.getConfig(dataId, group, 5000);
+            dataSourceSetLocal = objectMapper.readValue(configContent, new TypeReference<DataSourceSetLocal>() {});
+        } catch (NacosException | IOException e) {
+            log.error("Failed to load configuration from Nacos", e);
+            throw new RuntimeException("Failed to load configuration from Nacos", e);
+        }
+    }
+
     /** 获取账套配置 */
     public List<AccountSet> getAccountSets() {
         if(nacosEnable){
             log.debug("Get From Nacos!");
-            return nacosDataSourceSet.getAccountSets();
+            return null;
         }else{
             log.debug("Get From Local!");
             if(dataSourceSetLocal == null){
