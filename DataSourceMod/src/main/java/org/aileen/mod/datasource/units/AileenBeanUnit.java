@@ -1,9 +1,11 @@
 package org.aileen.mod.datasource.units;
 
 import lombok.extern.slf4j.Slf4j;
+import org.aileen.mod.datasource.starter.DataSourceStartRunner;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -16,13 +18,11 @@ import org.springframework.stereotype.Component;
  * {@code @date} 2024/11/19
  */
 @Slf4j
-@Component
-public class AileenBeanUnit implements ApplicationContextAware {
+public class AileenBeanUnit {
 
     private ApplicationContext applicationContext;
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public AileenBeanUnit(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 

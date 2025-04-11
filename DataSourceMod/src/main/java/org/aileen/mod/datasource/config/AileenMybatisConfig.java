@@ -3,19 +3,27 @@ package org.aileen.mod.datasource.config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
+import org.aileen.mod.datasource.databind.DataSourceConfig;
+import org.aileen.mod.datasource.databind.NacosDataSourceSet;
 import org.aileen.mod.datasource.dynamic.DynamicDataSource;
 import org.aileen.mod.datasource.exceptions.DataSourceModExceptionFactory;
 import org.aileen.mod.datasource.loader.AccountSetDataLoader;
 import org.aileen.mod.datasource.loader.DataSourceLoader;
 import org.aileen.mod.datasource.model.AccountSet;
-import org.aileen.mod.datasource.databind.DataSourceConfig;
 import org.aileen.mod.datasource.model.DataSourceData;
 import org.aileen.mod.datasource.units.AileenBeanUnit;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -26,7 +34,6 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Eugene-Forest
@@ -34,6 +41,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
+@EnableConfigurationProperties({NacosDataSourceSet.class, DataSourceConfig.class})
 public class AileenMybatisConfig {
 
     @Autowired

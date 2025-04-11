@@ -1,12 +1,19 @@
 package org.aileen.mod.datasource.starter;
 
 import lombok.extern.slf4j.Slf4j;
+import org.aileen.mod.datasource.units.AileenBeanUnit;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.cloud.context.properties.ConfigurationPropertiesBeans;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 import java.util.List;
@@ -18,7 +25,7 @@ import java.util.Map;
  * @author Eugene-Forest
  * {@code @date} 2024/11/19
  */
-//@Component
+@Configuration
 @Slf4j
 public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcessor, ApplicationContextAware {
 
@@ -26,41 +33,38 @@ public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcesso
 
     private Environment environment;
 
-    private static Map<String, String> logicNameMap;
-    private static List<String> mustDataSources;
+    @Bean
+    public AileenBeanUnit aileenBeanUnit() {
+        AileenBeanUnit aileenBeanUnit = new AileenBeanUnit(applicationContext);
+        log.debug("-- create AileenBeanUnit Bean --");
+        return aileenBeanUnit;
+    }
 
     @Override
-    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) throws BeansException {
+    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
         try {
             environment = applicationContext.getEnvironment();
-
-//            TcBeanUnit tcBeanUnit = applicationContext.getBean(TcBeanUnit.class);
-//            TcMybatisLoader tcMybatisLoader = new TcMybatisLoader(environment,tcBeanUnit);
-//            tcMybatisLoader.init();
-//            logicNameMap = tcMybatisLoader.getLogicNameMap();
-//            mustDataSources = tcMybatisLoader.getDataSourceNames();
-            log.info("DataSourceStartRunner init finished!");
         } catch (Exception e) {
             log.error("DataSourceStartRunner init failure!", e);
         }
     }
 
     @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {
-
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        try {
+            AileenBeanUnit aileenBeanUnit = beanFactory.getBean(AileenBeanUnit.class);
+            log.debug("-- AileenBeanUnit initialized in postProcessBeanFactory --");
+        } catch (BeansException e) {
+            log.warn("AileenBeanUnit not found, creating dynamically --", e);
+            AileenBeanUnit aileenBeanUnit = new AileenBeanUnit(applicationContext);
+            beanFactory.registerSingleton("aileenBeanUnit", aileenBeanUnit);
+            log.debug("-- Dynamically created and registered AileenBeanUnit Bean --");
+        }
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        // 获取Spring上下文
         this.applicationContext = applicationContext;
-    }
-
-    public static Map<String, String> getLogicNameMap() {
-        return logicNameMap;
-    }
-
-    public static List<String> getMustDataSources() {
-        return mustDataSources;
+        log.debug("-- DataSourceStartRunner.setApplicationContext --");
     }
 }
