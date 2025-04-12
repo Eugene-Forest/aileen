@@ -6,6 +6,9 @@ import org.aileen.datasourcesettest.model.MysqlTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
+
 @Service
 public class MysqlTestServiceImpl implements MysqlTestService {
 
@@ -32,5 +35,10 @@ public class MysqlTestServiceImpl implements MysqlTestService {
     @Override
     public void deleteMysqlTest(Long id) {
         mysqlTestMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public List<MysqlTest> getMysqlTestList() {
+        return mysqlTestMapper.getMysqlTestList();
     }
 }

@@ -1,18 +1,30 @@
 package org.aileen.mod.datasource.starter;
 
+import com.alibaba.cloud.commons.lang.StringUtils;
+import com.alibaba.nacos.api.NacosFactory;
+import com.alibaba.nacos.api.config.ConfigService;
+import com.alibaba.nacos.api.exception.NacosException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.aileen.mod.datasource.config.AileenMybatisConfig;
+import org.aileen.mod.datasource.exceptions.DataSourceModExceptionFactory;
+import org.aileen.mod.datasource.loader.AccountSetDataLoader;
+import org.aileen.mod.datasource.model.DataSourceConfigDto;
 import org.aileen.mod.datasource.model.DataSourceSet;
-import org.aileen.mod.datasource.units.AileenBeanUnit;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Value;
+import org.aileen.mod.datasource.model.DriverComConfigDto;
+import org.aileen.mod.datasource.utils.AileenBeanUtils;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * 初始 Bean 注册触发组件
@@ -20,7 +32,7 @@ import org.springframework.core.env.Environment;
  * @author Eugene-Forest
  * {@code @date} 2024/11/19
  */
-@Configuration
+@Component
 @Slf4j
 public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcessor, ApplicationContextAware {
 
@@ -28,31 +40,27 @@ public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcesso
 
     private Environment environment;
 
-    @Value("${datasource-mod.nacos-enable:false}")
-    private boolean nacosEnable;
+    private static final String DataSourceFilePath = "datasource-mod.file-path";
+    private static final String NacosEnable = "datasource-mod.nacos-enable";
+    private static final String NacosDataId = "datasource-mod.nacos-data-id";
+    private static final String NacosGroup = "datasource-mod.nacos-group";
+    private static final String NacosNamespace = "datasource-mod.nacos-namespace";
+    private static final String NacosServerAddr = "datasource-mod.nacos-server-addr";
 
-    @Value("${datasource-mod.file-path}")
-    private String filePath;
-
-    @Value("${nacos.server-addr}")
-    private String nacosServerAddr;
-
-    @Value("${nacos.data-id}")
-    private String dataId;
-
-    @Value("${nacos.group}")
-    private String group;
-
-
-    @Deprecated
-    @Bean
-    public static AileenBeanUnit aileenBeanUnit(ApplicationContext applicationContext) {
-        return new AileenBeanUnit(applicationContext);
-    }
+    private static final String DataSourceConfigDBServer = "datasource-mod.config.dbServer";
+    private static final String DataSourceConfigDbName = "datasource-mod.config.dbName";
+    private static final String DataSourceConfigMssqlDriverClassName = "datasource-mod.config.mssql.driverClassName";
+    private static final String DataSourceConfigMysqlDriverClassName = "datasource-mod.config.mysql.driverClassName";
+    private static final String DataSourceConfigMssqlJdbcUrl = "datasource-mod.config.mssql.jdbcUrl";
+    private static final String DataSourceConfigMysqlJdbcUrl = "datasource-mod.config.mysql.jdbcUrl";
 
     @Override
-    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
+    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
         log.debug("-- DataSourceStartRunner.postProcessBeanDefinitionRegistry --");
+        if (applicationContext == null) {
+            log.error("-- DataSourceStartRunner.postProcessBeanDefinitionRegistry -- applicationContext is null");
+            DataSourceModExceptionFactory.raiseException("applicationContext is null, check [DataSourceStartRunner].");
+        }
         try {
             environment = applicationContext.getEnvironment();
         } catch (Exception e) {
@@ -61,31 +69,80 @@ public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcesso
     }
 
     @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        AileenBeanUnit aileenBeanUnit;
-        try {
-            aileenBeanUnit = beanFactory.getBean(AileenBeanUnit.class);
-            log.debug("-- AileenBeanUnit initialized in postProcessBeanFactory --");
-        } catch (BeansException e) {
-            log.warn("AileenBeanUnit not found, creating dynamically --", e);
-            aileenBeanUnit = new AileenBeanUnit(applicationContext);
-            beanFactory.registerSingleton("aileenBeanUnit", aileenBeanUnit);
-            log.debug("-- Dynamically created and registered AileenBeanUnit Bean --");
-        }
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+        AileenBeanUtils aileenBeanUtils = new AileenBeanUtils(applicationContext);
         //获取所有数据源配置，并注册到容器中, 然后创建 AileenMybatisConfig Bean 进行 DataSource 的统一注册
         try {
-            //TODO: 只能先不关工具自动装配的事情，在定义和实例化中将 AileenMybatisConfig 所需要的配置和工具创建出来，实例化这个配置类
-            // 然后想一下如何做到把动态创建的bean能够被IDEA识别到，做到编辑器不报错
-            // ..做一个动态创建的config,然后根据条件来动态创建对应的bean，这些创建逻辑都是假的，应为必定存在对应的bean存在的条件，以此做到避免IDEA报错提示
-            DataSourceSet dataSourceSet = beanFactory.getBean(DataSourceSet.class);
+            boolean nacosEnable = environment.getProperty(NacosEnable, Boolean.class, false);
+            ObjectMapper objectMapper = new ObjectMapper();
+            DataSourceSet dataSourceSet = null;
+            if (nacosEnable) {
+                String nacosServerAddr = environment.getProperty(NacosServerAddr, String.class, "127.0.0.1:8848");
+                String dataId = environment.getProperty(NacosDataId, String.class, "datasource-set");
+                String group = environment.getProperty(NacosGroup, String.class, "DEFAULT_GROUP");
+                String namespace = environment.getProperty(NacosNamespace, String.class, "");
 
-        }catch (BeansException e) {
+                Properties properties = new Properties();
+                properties.put("serverAddr", nacosServerAddr);
+                if (!namespace.isEmpty()) {
+                    properties.put("namespace", namespace); // 如果 namespace 不为空，则设置
+                }
+                ConfigService configService = NacosFactory.createConfigService(properties);
+                String configContent = configService.getConfig(dataId, group, 5000);
+                if (StringUtils.isBlank(configContent)) {
+                    log.error("Nacos configuration not found for dataId: {}, group: {}, namespace: {}", dataId, group, namespace);
+                    DataSourceModExceptionFactory.raiseException("Nacos configuration not found");
+                }
+                log.debug("Loading configuration from Nacos with dataId: {}, group: {}, namespace: {}", dataId, group, namespace);
+                dataSourceSet = objectMapper.readValue(configContent, new TypeReference<DataSourceSet>() {
+                });
+                // 继续处理 dataSourceSe
+            } else {
+                String dataSourceFilePath = environment.getProperty(DataSourceFilePath, String.class, "classpath:datasource/datasourceset.json");
+                Resource resource = applicationContext.getResource(dataSourceFilePath);
+                dataSourceSet = objectMapper.readValue(resource.getInputStream(), new TypeReference<DataSourceSet>() {
+                });
+            }
+            if (dataSourceSet == null) {
+                // 账套数据载入失败
+                DataSourceModExceptionFactory.raiseException("DataSourceSet not create");
+            }
+            log.debug(dataSourceSet.toString());
+            // 手动绑定配置到 DataSourceConfigDto
+            DataSourceConfigDto manualDataSourceConfigDto = new DataSourceConfigDto();
+            manualDataSourceConfigDto.setDbServer(environment.getProperty(DataSourceConfigDBServer, String.class, "[dbServer]"));
+            manualDataSourceConfigDto.setDbName(environment.getProperty(DataSourceConfigDbName, String.class, "[dbName]"));
+
+            DriverComConfigDto mssqlConfig = new DriverComConfigDto();
+            mssqlConfig.setJdbcUrl(environment.getProperty(DataSourceConfigMssqlJdbcUrl, String.class, "jdbc:sqlserver://[dbServer]:1433;databaseName=[dbName];encrypt=false;trustServerCertificate=true"));
+            mssqlConfig.setDriverClassName(environment.getProperty(DataSourceConfigMssqlDriverClassName, String.class, "com.microsoft.sqlserver.jdbc.SQLServerDriver"));
+            manualDataSourceConfigDto.setMssql(mssqlConfig);
+
+            DriverComConfigDto mysqlConfig = new DriverComConfigDto();
+            mysqlConfig.setJdbcUrl(environment.getProperty(DataSourceConfigMysqlJdbcUrl, String.class, "jdbc:mysql://[dbServer]:3306/[dbName]?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true"));
+            mysqlConfig.setDriverClassName(environment.getProperty(DataSourceConfigMysqlDriverClassName, String.class, "com.mysql.cj.jdbc.Driver"));
+            manualDataSourceConfigDto.setMysql(mysqlConfig);
+
+            AccountSetDataLoader accountSetDataLoader = new AccountSetDataLoader(dataSourceSet);
+            AileenMybatisConfig aileenMybatisConfig = new AileenMybatisConfig(
+                    environment, aileenBeanUtils, accountSetDataLoader, manualDataSourceConfigDto);
+            aileenMybatisConfig.init();
+            beanFactory.registerSingleton("aileenMybatisConfig", aileenMybatisConfig);
+            beanFactory.registerSingleton("accountSetDataLoader", accountSetDataLoader);
+            beanFactory.registerSingleton("dataSourceSet", dataSourceSet);
+            beanFactory.registerSingleton("aileenBeanUnit", aileenBeanUtils);
+            log.debug("-- Dynamically created and registered AileenMybatisConfig Bean --");
+        } catch (IOException e) {
             log.error("-- DataSourceSet not found --", e);
+            DataSourceModExceptionFactory.raiseException(e);
+        } catch (NacosException e) {
+            log.error("-- NacosException --", e);
+            DataSourceModExceptionFactory.raiseException(e);
         }
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
         log.debug("-- DataSourceStartRunner.setApplicationContext --");
     }

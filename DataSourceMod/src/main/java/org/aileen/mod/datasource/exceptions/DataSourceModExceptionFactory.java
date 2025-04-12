@@ -18,4 +18,9 @@ public class DataSourceModExceptionFactory {
     public static DataSourceModException raiseException(String pattern, Object... args) throws DataSourceModException {
         throw new DataSourceModException(MessageFormat.format(pattern, args));
     }
+
+    public static DataSourceModException raiseException(Throwable cause) throws DataSourceModException {
+        throw new DataSourceModException(cause);
+    }
+
 }

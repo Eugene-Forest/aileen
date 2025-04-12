@@ -66,4 +66,10 @@
       age = #{age,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <select id="getMysqlTestList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from MySqlTest
+  </select>
 </mapper>

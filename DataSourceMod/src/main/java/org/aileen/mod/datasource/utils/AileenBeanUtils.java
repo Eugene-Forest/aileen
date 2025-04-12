@@ -1,16 +1,12 @@
-package org.aileen.mod.datasource.units;
+package org.aileen.mod.datasource.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.aileen.mod.datasource.starter.DataSourceStartRunner;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 
 /**
  * Bean 工具类
@@ -18,11 +14,11 @@ import org.springframework.stereotype.Component;
  * {@code @date} 2024/11/19
  */
 @Slf4j
-public class AileenBeanUnit {
+public class AileenBeanUtils {
 
     private ApplicationContext applicationContext;
 
-    public AileenBeanUnit(ApplicationContext applicationContext) {
+    public AileenBeanUtils(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
@@ -34,6 +30,7 @@ public class AileenBeanUnit {
      */
     public void registerSingleton(String beanName, Object singletonObject) {
         try {
+            log.warn("Registering singleton bean: " + beanName);
             DefaultListableBeanFactory beanFactory = getBeanFactory();
             beanFactory.registerSingleton(beanName, singletonObject);
         } catch (Exception e) {

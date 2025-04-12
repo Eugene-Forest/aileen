@@ -66,4 +66,10 @@
       age = #{age,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <select id="getMssqlTestList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from MssqlTest
+  </select>
 </mapper>

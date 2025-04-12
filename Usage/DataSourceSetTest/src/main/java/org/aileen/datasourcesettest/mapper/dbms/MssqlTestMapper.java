@@ -3,6 +3,8 @@ package org.aileen.datasourcesettest.mapper.dbms;
 import org.aileen.datasourcesettest.model.MssqlTest;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface MssqlTestMapper {
     int deleteByPrimaryKey(Long id);
@@ -16,4 +18,6 @@ public interface MssqlTestMapper {
     int updateByPrimaryKeySelective(MssqlTest record);
 
     int updateByPrimaryKey(MssqlTest record);
+
+    List<MssqlTest> getMssqlTestList();
 }

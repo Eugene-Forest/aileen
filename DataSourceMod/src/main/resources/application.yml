@@ -13,11 +13,15 @@ spring:
 
 
 datasource-mod:
-  #  nacos-enable: false
-  file-path: "/datasource/datasourceset.json"
+  nacos-enable: ${spring.cloud.nacos.config.enabled}
+  nacos-dataId: datasource-set
+  nacos-group: ${spring.cloud.nacos.config.group}
+  nacos-namespace: ${spring.cloud.nacos.config.namespace}
+  nacos-server-addr: ${spring.cloud.nacos.config.server-addr}
+  file-path: "classpath:datasource/datasourceset.json"
   mapper-locations:
-    d1: classpath:mapper/test1/*.xml
-    d2: classpath:mapper/test2/*.xml
+    d1: classpath*:mapper/test1/*.xml
+    d2: classpath*:mapper/test2/*.xml
   mapper-base-package:
     d1: com.example.demo.mapper
     d2: com.example.demo.mapper

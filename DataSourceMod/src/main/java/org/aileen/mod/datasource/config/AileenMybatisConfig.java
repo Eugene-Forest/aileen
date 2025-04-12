@@ -3,34 +3,22 @@ package org.aileen.mod.datasource.config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.aileen.mod.datasource.databind.DataSourceConfig;
-import org.aileen.mod.datasource.databind.NacosDataSourceSet;
 import org.aileen.mod.datasource.dynamic.DynamicDataSource;
 import org.aileen.mod.datasource.exceptions.DataSourceModExceptionFactory;
 import org.aileen.mod.datasource.loader.AccountSetDataLoader;
-import org.aileen.mod.datasource.loader.DataSourceLoader;
 import org.aileen.mod.datasource.model.AccountSet;
+import org.aileen.mod.datasource.model.DataSourceConfigDto;
 import org.aileen.mod.datasource.model.DataSourceData;
-import org.aileen.mod.datasource.units.AileenBeanUnit;
+import org.aileen.mod.datasource.utils.AileenBeanUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.*;
@@ -40,24 +28,15 @@ import java.util.*;
  * {@code @date} 2024/11/20
  */
 @Slf4j
-@Component
-@EnableConfigurationProperties({NacosDataSourceSet.class, DataSourceConfig.class})
 public class AileenMybatisConfig {
 
-    @Autowired
     private Environment environment;
 
-    @Autowired
-    private AileenBeanUnit aileenBeanUnit;
+    private AileenBeanUtils aileenBeanUtils;
 
-    @Autowired
-    private DataSourceLoader dataSourceLoader;
-
-    @Autowired
     private AccountSetDataLoader accountSetDataLoader;
 
-    @Autowired
-    private DataSourceConfig dataSourceConfig;
+    private DataSourceConfigDto dataSourceConfigDto;
 
     private final String logicNames = "datasource-mod.logic.names";
     private final String logicMap = "datasource-mod.logic.maps.";
@@ -71,11 +50,18 @@ public class AileenMybatisConfig {
 
     private String defaultAccount;
 
+
+    public AileenMybatisConfig(Environment environment, AileenBeanUtils aileenBeanUtils, AccountSetDataLoader accountSetDataLoader, DataSourceConfigDto dataSourceConfigDto) {
+        this.environment = environment;
+        this.aileenBeanUtils = aileenBeanUtils;
+        this.accountSetDataLoader = accountSetDataLoader;
+        this.dataSourceConfigDto = dataSourceConfigDto;
+    }
+
     /**
      * key: dbName, value: alias name
      */
 //    private Map<String, String> logicNameMap;
-    @PostConstruct
     public void init() {
         try {
             log.debug("-- DataSourceMod MybatisConfig init --");
@@ -104,12 +90,12 @@ public class AileenMybatisConfig {
                 DataSourceTransactionManager dataSourceTransactionManager = createDataSourceTransactionManager(dataSource);
                 //注册bean，分别注册 DataSource 、 SqlSessionFactory 、 事务管理器
                 register(dsName, dataSource);
-                register(dsName, sqlSessionFactory);
-                register(dsName, sqlSessionTemplate);
+                String sqlSessionFactoryBeanName = register(dsName, sqlSessionFactory);
+                String sqlSessionTemplateBeanName = register(dsName, sqlSessionTemplate);
                 register(dsName, dataSourceTransactionManager);
                 //MapperScanner 扫描
-                MapperScannerConfigurer mapperScannerConfigurer = createMapperScannerConfigurer(mapperBasePackage, null, dsName);
-                mapperScannerConfigurer.postProcessBeanFactory(aileenBeanUnit.getDefaultListableBeanFactory());
+                MapperScannerConfigurer mapperScannerConfigurer = createMapperScannerConfigurer(mapperBasePackage, sqlSessionFactoryBeanName, sqlSessionTemplateBeanName);
+                mapperScannerConfigurer.postProcessBeanDefinitionRegistry(aileenBeanUtils.getDefaultListableBeanFactory());
                 log.debug("-- Create {} DataSource success --", dsName);
             }
             log.info("-- DataSourceMod MybatisConfig init success --");
@@ -176,8 +162,8 @@ public class AileenMybatisConfig {
         for (String accountSetName : dataSourceDataMap.keySet()) {
             DataSourceData dataSourceData = dataSourceDataMap.get(accountSetName);
             HikariConfig config = new HikariConfig();
-            config.setJdbcUrl(dataSourceConfig.getJdbcUrl(dataSourceData.getDBType(), dataSourceData.getDBServer(), dataSourceData.getDBName()));
-            config.setDriverClassName(dataSourceConfig.getDriverClassName(dataSourceData.getDBType()));
+            config.setJdbcUrl(dataSourceConfigDto.getJdbcUrl(dataSourceData.getDBType(), dataSourceData.getDBServer(), dataSourceData.getDBName()));
+            config.setDriverClassName(dataSourceConfigDto.getDriverClassName(dataSourceData.getDBType()));
             config.setUsername(dataSourceData.getDBUser());
             config.setPassword(dataSourceData.getDBPassword());
             HikariDataSource dataSource = new HikariDataSource(config);
@@ -199,29 +185,28 @@ public class AileenMybatisConfig {
 
     private String register(String logicName, DataSource dataSource) {
         String beanName = "dataSource_" + logicName;
-        aileenBeanUnit.registerSingleton(beanName, dataSource);
+        aileenBeanUtils.registerSingleton(beanName, dataSource);
         log.debug("-- DataSourceMod MybatisConfig register DataSource [{}] --", beanName);
         return beanName;
     }
 
     private String register(String logicName, SqlSessionFactory sqlSessionFactory) {
         String beanName = "sqlSessionFactory_" + logicName;
-        aileenBeanUnit.registerSingleton(beanName, sqlSessionFactory);
+        aileenBeanUtils.registerSingleton(beanName, sqlSessionFactory);
         log.debug("-- DataSourceMod MybatisConfig register SqlSessionFactory [{}] --", beanName);
         return beanName;
     }
 
     private String register(String logicName, SqlSessionTemplate sqlSessionTemplate) {
         String beanName = "sqlSessionTemplate_" + logicName;
-        aileenBeanUnit.registerSingleton(beanName, sqlSessionTemplate);
+        aileenBeanUtils.registerSingleton(beanName, sqlSessionTemplate);
         log.debug("-- DataSourceMod MybatisConfig register SqlSessionTemplate [{}] --", beanName);
         return beanName;
     }
 
     private String register(String logicName, DataSourceTransactionManager dataSourceTransactionManager) {
         String beanName = "dataSourceTransactionManager_" + logicName;
-        aileenBeanUnit.registerSingleton(beanName, dataSourceTransactionManager);
-        log.debug("-- DataSourceMod MybatisConfig register DataSourceTransactionManager [{}] --", beanName);
+        aileenBeanUtils.registerSingleton(beanName, dataSourceTransactionManager);
         return beanName;
     }
 

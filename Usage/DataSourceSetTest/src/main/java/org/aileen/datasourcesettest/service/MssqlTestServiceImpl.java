@@ -6,6 +6,9 @@ import org.aileen.datasourcesettest.model.MssqlTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
+
 @Service
 public class MssqlTestServiceImpl implements MssqlTestService {
 
@@ -32,5 +35,10 @@ public class MssqlTestServiceImpl implements MssqlTestService {
     @Override
     public void deleteMssqlTest(Long id) {
         mssqlTestMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public List<MssqlTest> getMssqlTestList() {
+        return mssqlTestMapper.getMssqlTestList();
     }
 }

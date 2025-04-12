@@ -1,18 +1,14 @@
-package org.aileen.mod.datasource.databind;
+package org.aileen.mod.datasource.model;
 
 import lombok.Data;
 import org.aileen.mod.datasource.enums.DBType;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 @Data
-@Component
-@ConfigurationProperties(prefix = "datasource-mod.config")
-public class DataSourceConfig {
+public class DataSourceConfigDto {
     private String dbServer;
     private String dbName;
-    private DriverComConfig mssql;
-    private DriverComConfig mysql;
+    private DriverComConfigDto mssql;
+    private DriverComConfigDto mysql;
 
     public String getJdbcUrl(String dbType, String dbServer, String dbName) {
         DBType type = DBType.getDBType(dbType);
@@ -45,11 +41,4 @@ public class DataSourceConfig {
         }
         return driverClassName;
     }
-
-    @Data
-    static class DriverComConfig {
-        private String driverClassName;
-        private String jdbcUrl;
-    }
 }
-

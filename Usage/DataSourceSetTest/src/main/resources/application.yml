@@ -7,21 +7,24 @@ spring:
     name: DataSourceModTest
   profiles:
     active: private
-#  main:
-#    lazy-initialization: true
+
 #datasource-set:
 #  url: "jdbc:sqlserver://192.168.8.13:1433;databaseName=test"
 
 
 datasource-mod:
-  #  nacos-enable: false
-  file-path: "/datasource/datasourceset.json"
+  nacos-enable: ${spring.cloud.nacos.config.enabled}
+  nacos-dataId: datasource-set
+  nacos-group: ${spring.cloud.nacos.config.group}
+  nacos-namespace: ${spring.cloud.nacos.config.namespace}
+  nacos-server-addr: ${spring.cloud.nacos.config.server-addr}
+  file-path: "classpath:datasource/datasourceset.json"
   mapper-locations:
     d1: classpath*:mapper/dbmy/*.xml
     d2: classpath*:mapper/dbms/*.xml
   mapper-base-package:
-    d1: org.aileen.datasourcetest.mapper.dbmy
-    d2: org.aileen.datasourcetest.mapper.dbms
+    d1: org.aileen.datasourcesettest.mapper.dbmy
+    d2: org.aileen.datasourcesettest.mapper.dbms
   logic:
     # names 用来记录所有的数据源名称
     names: d1, d2
@@ -29,7 +32,8 @@ datasource-mod:
     #    maps:
     #      remote: R
     #      local: L
-#    default: d1
+    # 默认账套
+    default: d1
   mybatis-config:
     cache-enabled: false
     map-underscore-to-camel-case: false
@@ -48,4 +52,3 @@ datasource-mod:
 logging:
   level:
     org.aileen: debug
-
