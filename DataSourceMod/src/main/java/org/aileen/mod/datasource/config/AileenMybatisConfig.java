@@ -81,7 +81,7 @@ public class AileenMybatisConfig {
                 Resource[] mapperLocationResources = getMapperLocations(mapperLocations);
                 String defaultAccountSetName = accountSetDataLoader.getDefaultAccountSetName();
                 //创建数据源
-                DataSource dataSource = createDataSource(dsName, defaultAccountSetName);
+                DynamicDataSource dataSource = createDataSource(dsName, defaultAccountSetName);
                 //拦截器
                 //TODO: mybatis sql 拦截器
                 //创建 SqlSessionFactory ,用来映射指定路径XML文件
@@ -97,6 +97,8 @@ public class AileenMybatisConfig {
                 MapperScannerConfigurer mapperScannerConfigurer = createMapperScannerConfigurer(mapperBasePackage, sqlSessionFactoryBeanName, sqlSessionTemplateBeanName);
                 mapperScannerConfigurer.postProcessBeanDefinitionRegistry(aileenBeanUtils.getDefaultListableBeanFactory());
                 log.debug("-- Create {} DataSource success --", dsName);
+                //主动触发动态数据源的初始化
+                dataSource.afterPropertiesSet();
             }
             log.info("-- DataSourceMod MybatisConfig init success --");
         } catch (Throwable e) {
@@ -148,7 +150,7 @@ public class AileenMybatisConfig {
 //
 //        return true;
 //    }
-    private DataSource createDataSource(String dbId, String defaultAccountSetName) {
+    private DynamicDataSource createDataSource(String dbId, String defaultAccountSetName) {
         // 每个账套有多个数据源，其会映射到不同的XML
         // 每个DataSource会对应一个sqlSessionFactory，而sqlSessionFactory才是真正映射XML的对象
         // 对于同一个动态数据源，它的所有可选数据源都是使用同一个sqlSessionFactory

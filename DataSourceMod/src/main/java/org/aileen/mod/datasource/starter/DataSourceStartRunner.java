@@ -46,6 +46,8 @@ public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcesso
     private static final String NacosGroup = "datasource-mod.nacos-group";
     private static final String NacosNamespace = "datasource-mod.nacos-namespace";
     private static final String NacosServerAddr = "datasource-mod.nacos-server-addr";
+    private static final String NacosUsername = "datasource-mod.nacos-username";
+    private static final String NacosPassword = "datasource-mod.nacos-password";
 
     private static final String DataSourceConfigDBServer = "datasource-mod.config.dbServer";
     private static final String DataSourceConfigDbName = "datasource-mod.config.dbName";
@@ -70,6 +72,11 @@ public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcesso
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+        //TODO: 问题： 如果通过手动创建单例 Bean 的方式，会使得部分实现了特性接口的 Bean, 不会随着 Spring 的自动装配自动调用对应的方法。
+        // 例如： DynamicDataSource 不会自动调用 afterPropertiesSet 方法，从而导致动态数据源的初始化异常。
+        // 考虑将所有的需要注册的 Bean 都先创建 BeanDefinition , 然后通过Spring统一注册
+        // 但是这就会有个问题， AileenMybatisConfig Bean 中又会自动创建 BeanDefinition ，此时执行 Bean 初始化的逻辑似乎有些错误。
+        // 或者手动注册 AileenMybatisConfig, 然后在 AileenMybatisConfig 中定义其他 BeanDefinition
         AileenBeanUtils aileenBeanUtils = new AileenBeanUtils(applicationContext);
         //获取所有数据源配置，并注册到容器中, 然后创建 AileenMybatisConfig Bean 进行 DataSource 的统一注册
         try {
@@ -81,12 +88,19 @@ public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcesso
                 String dataId = environment.getProperty(NacosDataId, String.class, "datasource-set");
                 String group = environment.getProperty(NacosGroup, String.class, "DEFAULT_GROUP");
                 String namespace = environment.getProperty(NacosNamespace, String.class, "");
+                String username = environment.getProperty(NacosUsername, String.class, "");
+                String password = environment.getProperty(NacosPassword, String.class, "");
 
                 Properties properties = new Properties();
                 properties.put("serverAddr", nacosServerAddr);
                 if (!namespace.isEmpty()) {
                     properties.put("namespace", namespace); // 如果 namespace 不为空，则设置
                 }
+                if (!username.isEmpty() && !password.isEmpty()) {
+                    properties.put("username", username);
+                    properties.put("password", password);
+                }
+                // TODO: 问题： 手动创建 Nacos 服务获取配置，自动创建了监听配置变化的服务，目前没有考虑好如何实现动态数据源配置的动态动态变化，需要关闭监听服务
                 ConfigService configService = NacosFactory.createConfigService(properties);
                 String configContent = configService.getConfig(dataId, group, 5000);
                 if (StringUtils.isBlank(configContent)) {

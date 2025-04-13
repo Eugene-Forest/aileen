@@ -18,6 +18,8 @@ datasource-mod:
   nacos-group: ${spring.cloud.nacos.config.group}
   nacos-namespace: ${spring.cloud.nacos.config.namespace}
   nacos-server-addr: ${spring.cloud.nacos.config.server-addr}
+  nacos-username: ${spring.cloud.nacos.config.username}
+  nacos-password: ${spring.cloud.nacos.config.password}
   file-path: "classpath:datasource/datasourceset.json"
   mapper-locations:
     d1: classpath*:mapper/dbmy/*.xml
