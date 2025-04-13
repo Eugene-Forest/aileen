@@ -3,6 +3,7 @@ package org.aileen.mod.datasource.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -38,16 +39,30 @@ public class AileenBeanUtils {
         }
     }
 
+//    /**
+//     * 注册 Bean 定义
+//     *
+//     * @param beanName      Bean 名称
+//     * @param requiredType  Bean 类型
+//     */
+//    public void registerBeanDefinition(String beanName, Class<?> requiredType) {
+//        try {
+//            DefaultListableBeanFactory beanFactory = getBeanFactory();
+//            beanFactory.registerBeanDefinition(beanName, beanFactory.getBeanDefinition(requiredType.getName()));
+//        } catch (Exception e) {
+//            throw new RuntimeException("Failed to register bean definition: " + beanName, e);
+//        }
+//    }
+
     /**
      * 注册 Bean 定义
-     *
-     * @param beanName      Bean 名称
-     * @param requiredType  Bean 类型
+     * @param beanName Bean 名称
+     * @param beanDefinition Bean 定义
      */
-    public void registerBeanDefinition(String beanName, Class<?> requiredType) {
+    public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition){
         try {
             DefaultListableBeanFactory beanFactory = getBeanFactory();
-            beanFactory.registerBeanDefinition(beanName, beanFactory.getBeanDefinition(requiredType.getName()));
+            beanFactory.registerBeanDefinition(beanName, beanDefinition);
         } catch (Exception e) {
             throw new RuntimeException("Failed to register bean definition: " + beanName, e);
         }

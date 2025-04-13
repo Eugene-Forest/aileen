@@ -58,6 +58,8 @@ public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcesso
 
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
+        // Take-care: 如果通过手动创建单例 Bean 的方式，会使得部分实现了特性接口的 Bean, 不会随着 Spring 的自动装配自动调用对应的方法。
+        // 例如： DynamicDataSource 不会自动调用 afterPropertiesSet 方法，从而导致动态数据源的初始化异常。
         log.debug("-- DataSourceStartRunner.postProcessBeanDefinitionRegistry --");
         if (applicationContext == null) {
             log.error("-- DataSourceStartRunner.postProcessBeanDefinitionRegistry -- applicationContext is null");
@@ -68,15 +70,6 @@ public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcesso
         } catch (Exception e) {
             log.error("DataSourceStartRunner init failure!", e);
         }
-    }
-
-    @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
-        //TODO: 问题： 如果通过手动创建单例 Bean 的方式，会使得部分实现了特性接口的 Bean, 不会随着 Spring 的自动装配自动调用对应的方法。
-        // 例如： DynamicDataSource 不会自动调用 afterPropertiesSet 方法，从而导致动态数据源的初始化异常。
-        // 考虑将所有的需要注册的 Bean 都先创建 BeanDefinition , 然后通过Spring统一注册
-        // 但是这就会有个问题， AileenMybatisConfig Bean 中又会自动创建 BeanDefinition ，此时执行 Bean 初始化的逻辑似乎有些错误。
-        // 或者手动注册 AileenMybatisConfig, 然后在 AileenMybatisConfig 中定义其他 BeanDefinition
         AileenBeanUtils aileenBeanUtils = new AileenBeanUtils(applicationContext);
         //获取所有数据源配置，并注册到容器中, 然后创建 AileenMybatisConfig Bean 进行 DataSource 的统一注册
         try {
@@ -141,10 +134,10 @@ public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcesso
             AileenMybatisConfig aileenMybatisConfig = new AileenMybatisConfig(
                     environment, aileenBeanUtils, accountSetDataLoader, manualDataSourceConfigDto);
             aileenMybatisConfig.init();
-            beanFactory.registerSingleton("aileenMybatisConfig", aileenMybatisConfig);
-            beanFactory.registerSingleton("accountSetDataLoader", accountSetDataLoader);
-            beanFactory.registerSingleton("dataSourceSet", dataSourceSet);
-            beanFactory.registerSingleton("aileenBeanUnit", aileenBeanUtils);
+            aileenBeanUtils.registerSingleton("aileenMybatisConfig", aileenMybatisConfig);
+            aileenBeanUtils.registerSingleton("accountSetDataLoader", accountSetDataLoader);
+            aileenBeanUtils.registerSingleton("dataSourceSet", dataSourceSet);
+            aileenBeanUtils.registerSingleton("aileenBeanUnit", aileenBeanUtils);
             log.debug("-- Dynamically created and registered AileenMybatisConfig Bean --");
         } catch (IOException e) {
             log.error("-- DataSourceSet not found --", e);
@@ -153,6 +146,11 @@ public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcesso
             log.error("-- NacosException --", e);
             DataSourceModExceptionFactory.raiseException(e);
         }
+    }
+
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+        log.debug("DataSourceStartRunner.postProcessBeanFactory --");
     }
 
     @Override
