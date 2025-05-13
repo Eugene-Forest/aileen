@@ -21,16 +21,11 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
 
     @Override
     protected Object determineCurrentLookupKey() {
-        log.info("Select {}",DataSourceLoader.getDataSource());
+        log.debug("Select {}",DataSourceLoader.getDataSource());
         return DataSourceLoader.getDataSource();
     }
 
     public String getDataSourceName() {
         return dataSourceName;
-    }
-
-    @Override
-    protected DataSource determineTargetDataSource() {
-        return super.determineTargetDataSource();
     }
 }

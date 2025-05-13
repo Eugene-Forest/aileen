@@ -22,7 +22,7 @@ public class MssqlTestServiceImpl implements MssqlTestService {
 
     @Override
     public MssqlTest insertMssqlTest(MssqlTest mssqlTest) {
-        mssqlTestMapper.insert(mssqlTest);
+        mssqlTestMapper.insertSelective(mssqlTest);
         return mssqlTest;
     }
 

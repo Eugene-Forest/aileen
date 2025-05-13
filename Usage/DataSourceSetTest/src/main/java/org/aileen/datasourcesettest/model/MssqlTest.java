@@ -1,10 +1,14 @@
 package org.aileen.datasourcesettest.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class MssqlTest {
     private Long id;
 
     private String name;
 
+//    @JsonIgnore
     private Integer age;
 
     public Long getId() {
@@ -23,6 +27,7 @@ public class MssqlTest {
         this.name = name;
     }
 
+    @JsonProperty("TestAge")
     public Integer getAge() {
         return age;
     }

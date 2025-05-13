@@ -3,7 +3,7 @@ package org.aileen.datasourcesettest;
 import org.aileen.datasourcesettest.client.MssqlTestService;
 import org.aileen.datasourcesettest.mapper.dbms.MssqlTestMapper;
 import org.aileen.datasourcesettest.service.MssqlTestServiceImpl;
-import org.aileen.mod.datasource.config.AileenMybatisConfig;
+import org.aileen.mod.datasource.utils.DataSourceBeanDefinitionRegister;
 import org.aileen.mod.datasource.dynamic.DynamicDataSource;
 import org.aileen.mod.datasource.utils.AileenBeanUtils;
 import org.springframework.boot.SpringApplication;
@@ -16,8 +16,8 @@ import org.springframework.context.ApplicationContext;
 public class DataSourceSetTestApplication {
     public static void main(String[] args) {
         ApplicationContext context = SpringApplication.run(DataSourceSetTestApplication.class, args);
-        AileenMybatisConfig aileenMybatisConfig = context.getBean(AileenMybatisConfig.class);
-        aileenMybatisConfig.getDataSourceNames();
+        DataSourceBeanDefinitionRegister dataSourceBeanDefinitionRegister = context.getBean(DataSourceBeanDefinitionRegister.class);
+        dataSourceBeanDefinitionRegister.getDataSourceNames();
         AileenBeanUtils aileenBeanUtils = context.getBean(AileenBeanUtils.class);
         String[] datasourceNames = context.getBeanNamesForType(DynamicDataSource.class);
         for (String datasourceName : datasourceNames){

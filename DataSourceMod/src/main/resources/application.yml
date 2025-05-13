@@ -1,8 +1,10 @@
 
 server:
   port: 8000
-
 spring:
+  jackson:
+    # 序列化所有属性包括空属性
+    default-property-inclusion: always
   application:
     name: DataSourceMod
   profiles:
@@ -52,3 +54,5 @@ datasource-mod:
 logging:
   level:
     org.aileen: debug
+
+

@@ -1,4 +1,4 @@
-package org.aileen.mod.datasource.config;
+package org.aileen.mod.datasource.utils;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -9,7 +9,6 @@ import org.aileen.mod.datasource.loader.AccountSetDataLoader;
 import org.aileen.mod.datasource.model.AccountSet;
 import org.aileen.mod.datasource.model.DataSourceConfigDto;
 import org.aileen.mod.datasource.model.DataSourceData;
-import org.aileen.mod.datasource.utils.AileenBeanUtils;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
@@ -28,7 +27,7 @@ import java.util.*;
  * {@code @date} 2024/11/20
  */
 @Slf4j
-public class AileenMybatisConfig {
+public class DataSourceBeanDefinitionRegister {
 
     private Environment environment;
 
@@ -51,20 +50,16 @@ public class AileenMybatisConfig {
     private String defaultAccount;
 
 
-    public AileenMybatisConfig(Environment environment, AileenBeanUtils aileenBeanUtils, AccountSetDataLoader accountSetDataLoader, DataSourceConfigDto dataSourceConfigDto) {
+    public DataSourceBeanDefinitionRegister(Environment environment, AileenBeanUtils aileenBeanUtils, AccountSetDataLoader accountSetDataLoader, DataSourceConfigDto dataSourceConfigDto) {
         this.environment = environment;
         this.aileenBeanUtils = aileenBeanUtils;
         this.accountSetDataLoader = accountSetDataLoader;
         this.dataSourceConfigDto = dataSourceConfigDto;
     }
 
-    /**
-     * key: dbName, value: alias name
-     */
-//    private Map<String, String> logicNameMap;
     public void init() {
         try {
-            log.debug("-- DataSourceMod MybatisConfig init --");
+            log.debug("-- DataSourceBeanDefinitionRegister init --");
 //        Map<String, String> logicNameMap = getLogicNameMap();
             // 在创建数据源之前，检查账套数据与配置文件是否构成合理映射
 
@@ -72,7 +67,7 @@ public class AileenMybatisConfig {
             // i一个Account对应一个Dy的Ele
             //
             for (String dsName : getDataSourceNames()) {
-                log.debug("-- Create {} DataSource --", dsName);
+                log.debug("-- Create {} DataSource BeanDefinition --", dsName);
                 String mapperLocations = environment.getProperty(mybatisLocation + dsName);
                 String mapperBasePackage = environment.getProperty(mybatisBasePackage + dsName);
                 if (mapperLocations == null || mapperBasePackage == null) {
@@ -84,16 +79,19 @@ public class AileenMybatisConfig {
                 // 创建数据源定义
                 BeanDefinition dynamicDataSourceBeanDefinition = createDynamicDataSourceBeanDefinition(dsName, defaultAccountSetName);
                 // 注册数据源定义
-                String dataSourceBeanName = registerDataSource(dsName, dynamicDataSourceBeanDefinition);
+                String dataSourceBeanName = registerDataSourceBeanDefinition(dsName, dynamicDataSourceBeanDefinition);
                 //拦截器
                 //TODO: mybatis sql 拦截器
                 //创建 SqlSessionFactory 定义 ,用来映射指定路径XML文件
                 BeanDefinition sqlSessionFactoryBeanDefinition = createSqlSessionFactoryDefinition(dataSourceBeanName, mapperLocationResources);
-                String sqlSessionFactoryBeanName = registerSqlSessionFactory(dsName, sqlSessionFactoryBeanDefinition);
+                String sqlSessionFactoryBeanName = registerSqlSessionFactoryBeanDefinition(dsName, sqlSessionFactoryBeanDefinition);
+
                 BeanDefinition sqlSessionTemplateBeanDefinition = createSqlSessionTemplateBeanDefinition(sqlSessionFactoryBeanName);
-                String sqlSessionTemplateBeanName = registerSessionTemplate(dsName, sqlSessionTemplateBeanDefinition);
+                String sqlSessionTemplateBeanName = registerSessionTemplateBeanDefinition(dsName, sqlSessionTemplateBeanDefinition);
+
                 BeanDefinition dataSourceTransactionManagerBeanDefinition = createDataSourceTransactionManagerBeanDefinition(dataSourceBeanName);
-                registerDataSourceTransactionManager(dsName, dataSourceTransactionManagerBeanDefinition);
+                String dataSourceTransactionManagerBeanName = registerDataSourceTransactionManagerBeanDefinition(dsName, dataSourceTransactionManagerBeanDefinition);
+
                 //MapperScanner 扫描
                 MapperScannerConfigurer mapperScannerConfigurer = createMapperScannerConfigurer(mapperBasePackage, sqlSessionFactoryBeanName, sqlSessionTemplateBeanName);
                 mapperScannerConfigurer.postProcessBeanDefinitionRegistry(aileenBeanUtils.getDefaultListableBeanFactory());
@@ -187,28 +185,28 @@ public class AileenMybatisConfig {
         return builder.getBeanDefinition();
     }
 
-    private String registerDataSource(String logicName, BeanDefinition dataSourceBeanDefinition) {
+    private String registerDataSourceBeanDefinition(String logicName, BeanDefinition dataSourceBeanDefinition) {
         String beanName = "dataSource_" + logicName;
         aileenBeanUtils.registerBeanDefinition(beanName, dataSourceBeanDefinition);
         log.debug("-- DataSourceMod MybatisConfig register DataSource [{}] --", beanName);
         return beanName;
     }
 
-    private String registerSqlSessionFactory(String logicName, BeanDefinition sqlSessionFactoryBeanDefinition) {
+    private String registerSqlSessionFactoryBeanDefinition(String logicName, BeanDefinition sqlSessionFactoryBeanDefinition) {
         String beanName = "sqlSessionFactory_" + logicName;
         aileenBeanUtils.registerBeanDefinition(beanName, sqlSessionFactoryBeanDefinition);
         log.debug("-- DataSourceMod MybatisConfig register SqlSessionFactory [{}] --", beanName);
         return beanName;
     }
 
-    private String registerSessionTemplate(String logicName, BeanDefinition sqlSessionTemplateBeanDefinition) {
+    private String registerSessionTemplateBeanDefinition(String logicName, BeanDefinition sqlSessionTemplateBeanDefinition) {
         String beanName = "sqlSessionTemplate_" + logicName;
         aileenBeanUtils.registerBeanDefinition(beanName, sqlSessionTemplateBeanDefinition);
         log.debug("-- DataSourceMod MybatisConfig register SqlSessionTemplate [{}] --", beanName);
         return beanName;
     }
 
-    private String registerDataSourceTransactionManager(String logicName, BeanDefinition dataSourceTransactionManagerBeanDefinition) {
+    private String registerDataSourceTransactionManagerBeanDefinition(String logicName, BeanDefinition dataSourceTransactionManagerBeanDefinition) {
         String beanName = "dataSourceTransactionManager_" + logicName;
         aileenBeanUtils.registerBeanDefinition(beanName, dataSourceTransactionManagerBeanDefinition);
         return beanName;

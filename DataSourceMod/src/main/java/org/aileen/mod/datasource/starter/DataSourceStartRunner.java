@@ -7,7 +7,7 @@ import com.alibaba.nacos.api.exception.NacosException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.aileen.mod.datasource.config.AileenMybatisConfig;
+import org.aileen.mod.datasource.utils.DataSourceBeanDefinitionRegister;
 import org.aileen.mod.datasource.exceptions.DataSourceModExceptionFactory;
 import org.aileen.mod.datasource.loader.AccountSetDataLoader;
 import org.aileen.mod.datasource.model.DataSourceConfigDto;
@@ -39,6 +39,12 @@ public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcesso
     private ApplicationContext applicationContext;
 
     private Environment environment;
+
+    public static final String AileenBeanUtils_BeanName = "aileenBeanUtils";
+    public static final String DataSourceBeanDefinitionRegister_BeanName = "dataSourceBeanDefinitionRegister";
+    public static final String AccountSetDataLoader_BeanName = "accountSetDataLoader";
+    public static final String DataSourceSet_BeanName = "dataSourceSet";
+
 
     private static final String DataSourceFilePath = "datasource-mod.file-path";
     private static final String NacosEnable = "datasource-mod.nacos-enable";
@@ -93,7 +99,6 @@ public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcesso
                     properties.put("username", username);
                     properties.put("password", password);
                 }
-                // TODO: 问题： 手动创建 Nacos 服务获取配置，自动创建了监听配置变化的服务，目前没有考虑好如何实现动态数据源配置的动态动态变化，需要关闭监听服务
                 ConfigService configService = NacosFactory.createConfigService(properties);
                 String configContent = configService.getConfig(dataId, group, 5000);
                 if (StringUtils.isBlank(configContent)) {
@@ -103,7 +108,8 @@ public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcesso
                 log.debug("Loading configuration from Nacos with dataId: {}, group: {}, namespace: {}", dataId, group, namespace);
                 dataSourceSet = objectMapper.readValue(configContent, new TypeReference<DataSourceSet>() {
                 });
-                // 继续处理 dataSourceSe
+                //主动结束 Nacos 配置监听服务
+                configService.shutDown();
             } else {
                 String dataSourceFilePath = environment.getProperty(DataSourceFilePath, String.class, "classpath:datasource/datasourceset.json");
                 Resource resource = applicationContext.getResource(dataSourceFilePath);
@@ -131,13 +137,13 @@ public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcesso
             manualDataSourceConfigDto.setMysql(mysqlConfig);
 
             AccountSetDataLoader accountSetDataLoader = new AccountSetDataLoader(dataSourceSet);
-            AileenMybatisConfig aileenMybatisConfig = new AileenMybatisConfig(
+            DataSourceBeanDefinitionRegister dataSourceBeanDefinitionRegister = new DataSourceBeanDefinitionRegister(
                     environment, aileenBeanUtils, accountSetDataLoader, manualDataSourceConfigDto);
-            aileenMybatisConfig.init();
-            aileenBeanUtils.registerSingleton("aileenMybatisConfig", aileenMybatisConfig);
-            aileenBeanUtils.registerSingleton("accountSetDataLoader", accountSetDataLoader);
-            aileenBeanUtils.registerSingleton("dataSourceSet", dataSourceSet);
-            aileenBeanUtils.registerSingleton("aileenBeanUnit", aileenBeanUtils);
+            dataSourceBeanDefinitionRegister.init();
+            aileenBeanUtils.registerSingleton(DataSourceBeanDefinitionRegister_BeanName, dataSourceBeanDefinitionRegister);
+            aileenBeanUtils.registerSingleton(AccountSetDataLoader_BeanName, accountSetDataLoader);
+            aileenBeanUtils.registerSingleton(DataSourceSet_BeanName, dataSourceSet);
+            aileenBeanUtils.registerSingleton(AileenBeanUtils_BeanName, aileenBeanUtils);
             log.debug("-- Dynamically created and registered AileenMybatisConfig Bean --");
         } catch (IOException e) {
             log.error("-- DataSourceSet not found --", e);
