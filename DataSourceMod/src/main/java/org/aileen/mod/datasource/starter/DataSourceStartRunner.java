@@ -140,9 +140,9 @@ public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcesso
             DataSourceBeanDefinitionRegister dataSourceBeanDefinitionRegister = new DataSourceBeanDefinitionRegister(
                     environment, aileenBeanUtils, accountSetDataLoader, manualDataSourceConfigDto);
             dataSourceBeanDefinitionRegister.init();
-            aileenBeanUtils.registerSingleton(DataSourceBeanDefinitionRegister_BeanName, dataSourceBeanDefinitionRegister);
+//            aileenBeanUtils.registerSingleton(DataSourceBeanDefinitionRegister_BeanName, dataSourceBeanDefinitionRegister);
             aileenBeanUtils.registerSingleton(AccountSetDataLoader_BeanName, accountSetDataLoader);
-            aileenBeanUtils.registerSingleton(DataSourceSet_BeanName, dataSourceSet);
+//            aileenBeanUtils.registerSingleton(DataSourceSet_BeanName, dataSourceSet);
             aileenBeanUtils.registerSingleton(AileenBeanUtils_BeanName, aileenBeanUtils);
             log.debug("-- Dynamically created and registered AileenMybatisConfig Bean --");
         } catch (IOException e) {

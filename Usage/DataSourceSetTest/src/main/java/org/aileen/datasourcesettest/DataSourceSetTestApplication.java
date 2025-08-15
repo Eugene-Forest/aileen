@@ -16,8 +16,8 @@ import org.springframework.context.ApplicationContext;
 public class DataSourceSetTestApplication {
     public static void main(String[] args) {
         ApplicationContext context = SpringApplication.run(DataSourceSetTestApplication.class, args);
-        DataSourceBeanDefinitionRegister dataSourceBeanDefinitionRegister = context.getBean(DataSourceBeanDefinitionRegister.class);
-        dataSourceBeanDefinitionRegister.getDataSourceNames();
+//        DataSourceBeanDefinitionRegister dataSourceBeanDefinitionRegister = context.getBean(DataSourceBeanDefinitionRegister.class);
+//        dataSourceBeanDefinitionRegister.getDataSourceNames();
         AileenBeanUtils aileenBeanUtils = context.getBean(AileenBeanUtils.class);
         String[] datasourceNames = context.getBeanNamesForType(DynamicDataSource.class);
         for (String datasourceName : datasourceNames){
