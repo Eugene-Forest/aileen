@@ -1,7 +1,7 @@
 package org.aileen.lc.quartz;
 
-import mod.quartz.QuartzInfo;
-import mod.quartz.QuartzUtils;
+import mod.quartz.CustomQuartzInfo;
+import mod.quartz.CustomQuartzUtils;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -43,16 +43,18 @@ public class AutoJob implements ApplicationRunner {
             logger.error("任务 testJob 创建失败", e);
         }
 
-        QuartzInfo quartzInfo = new QuartzInfo();
-        quartzInfo.setJobName("testJob");
+        CustomQuartzInfo customQuartzInfo = new CustomQuartzInfo();
+        customQuartzInfo.setGroupName("testGroup");
+        customQuartzInfo.setJobName("testJob");
         // 使用 LocalDateTime 创建日期（Java 8+ 推荐方式）
-        LocalDateTime startDateTime = LocalDateTime.of(2025, 8, 19, 17, 29, 0);
-        quartzInfo.setStartTime(Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant()));
+        LocalDateTime startDateTime = LocalDateTime.of(2025, 8, 20, 9, 12, 0);
+        customQuartzInfo.setStartTime(Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant()));
 
-        LocalDateTime endDateTime = LocalDateTime.of(2025, 8, 19, 17, 35, 0);
-        quartzInfo.setEndTime(Date.from(endDateTime.atZone(ZoneId.systemDefault()).toInstant()));
+        LocalDateTime endDateTime = LocalDateTime.of(2025, 8, 20, 11, 50, 0);
+        customQuartzInfo.setEndTime(Date.from(endDateTime.atZone(ZoneId.systemDefault()).toInstant()));
         //时间范围内每隔20秒执行一次
-        quartzInfo.setCronExpression("*/10 * * * * ?");
-        QuartzUtils.createScheduleJob(scheduler, TestLogJob.class, quartzInfo);
+        customQuartzInfo.setCronExpression("*/5 * * * * ?");
+        customQuartzInfo.setCount(5);
+        CustomQuartzUtils.createScheduleJob(scheduler, TestLogJob.class, customQuartzInfo);
     }
 }
