@@ -1,5 +1,6 @@
 package org.aileen.mod.auth.verify;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.aileen.mod.auth.common.HttpRequestHelper;
 import org.aileen.mod.auth.entity.AccountSignature;
 import org.aileen.mod.auth.entity.SimpleSignature;
@@ -11,7 +12,6 @@ import org.springframework.util.StreamUtils;
 
 ;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
