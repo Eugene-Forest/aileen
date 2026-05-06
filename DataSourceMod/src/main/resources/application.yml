@@ -1,53 +1,58 @@
 
 server:
   port: 8000
-
 spring:
+  jackson:
+    # 序列化所有属性包括空属性
+    default-property-inclusion: always
   application:
     name: DataSourceMod
   profiles:
     active: private
 
-datasource-set:
-  url: "jdbc:sqlserver://192.168.8.13:1433;databaseName=test"
+#datasource-set:
+#  url: "jdbc:sqlserver://192.168.8.13:1433;databaseName=test"
+
 
 datasource-mod:
-  nacos-enable: false
-  file-path: "/datasource/datasourceset.json"
+  nacos-enable: ${spring.cloud.nacos.config.enabled}
+  nacos-dataId: datasource-set
+  nacos-group: ${spring.cloud.nacos.config.group}
+  nacos-namespace: ${spring.cloud.nacos.config.namespace}
+  nacos-server-addr: ${spring.cloud.nacos.config.server-addr}
+  file-path: "classpath:datasource/datasourceset.json"
   mapper-locations:
-    remote: classpath:mapper/test1/*.xml
-    local: classpath:mapper/test2/*.xml
+    d1: classpath*:mapper/test1/*.xml
+    d2: classpath*:mapper/test2/*.xml
   mapper-base-package:
-    remote: com.example.demo.mapper
-    local: com.example.demo.mapper
+    d1: com.example.demo.mapper
+    d2: com.example.demo.mapper
   logic:
-    names: remote, local
-    maps:
-      remote: Remote
-      local: Local
-    default: Local
-  configuration:
+    # names 用来记录所有的数据源名称
+    names: d1, d2
+    #    # maps 用来记录数据源名称和数据源别名
+    #    maps:
+    #      remote: R
+    #      local: L
+    # 默认账套
+    default: d1
+  mybatis-config:
     cache-enabled: false
     map-underscore-to-camel-case: false
     call-setters-on-nulls: true
     return-instance-for-empty-row: false
-  url: "http://192.168.8.13:8888/getDBList"
-  driverClassName: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
-  jdbcUrl: "jdbc:sqlserver://[ip]:[port];databaseName=[dbName]"
-  ip: "[ip]"
-  port: "[port]"
-  dbName: "[dbName]"
-  model: 2 # 0: file 1: http 2: http_file
-  extend:
-    file: "extendDataSourceSet.json"
+  config:
+    dbServer: "[dbServer]"
+    dbName: "[dbName]"
     mssql:
       driverClassName: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
-      jdbcUrl: "jdbc:sqlserver://[ip]:[port];databaseName=[dbName]"
+      jdbcUrl: "jdbc:sqlserver://[dbServer]:1433;databaseName=[dbName];encrypt=false;trustServerCertificate=true"
     mysql:
-      driverClassName: "com.mysql.jdbc.Driver"
-      jdbcUrl: "jdbc:mysql://[ip]:[port]/[dbName]?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC"
+      driverClassName: "com.mysql.cj.jdbc.Driver"
+      jdbcUrl: "jdbc:mysql://[dbServer]:3306/[dbName]?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true"
 
 logging:
   level:
     org.aileen: debug
-    org。springframework。boot.context.properties: DEBUG
+
+

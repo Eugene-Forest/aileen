@@ -3,7 +3,7 @@ package org.aileen.mod.auth.interceptor;
 import org.aileen.mod.auth.anno.EncryptRequest;
 import org.aileen.mod.auth.enums.RequestEncryptType;
 import org.aileen.mod.auth.units.AnnoUnits;
-import org.aileen.mod.auth.units.CryptoUnits;
+import org.aileen.mod.crypto.CryptoUnits;
 import org.aileen.mod.auth.verify.DefaultVerifySign;
 import org.aileen.mod.redis.RedisUtil;
 import org.slf4j.Logger;
@@ -64,7 +64,11 @@ public class RequestInterceptor implements HandlerInterceptor {
                         redisUtil.expire("password", 1, TimeUnit.SECONDS);
                         return true;
                     } else {
-                        throw new RuntimeException("验签失败");
+                        // 修改部分：返回自定义错误响应
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.setContentType("application/json;charset=UTF-8");
+                        response.getWriter().write("{\"error\":\"验签失败\",\"message\":\"签名验证失败，请检查请求签名\"}");
+                        return false;
                     }
                 } else {
                     return true;

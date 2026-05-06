@@ -12,6 +12,8 @@
         <module>DatasourceSetService</module>
         <module>HttpAnalyseService</module>
         <module>LCM3v81</module>
+        <module>DataSourceSetTest</module>
+        <module>AuthTest</module>
     </modules>
 
     <properties>

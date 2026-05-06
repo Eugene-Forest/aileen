@@ -63,4 +63,12 @@ public class Base64Kit {
             throw new RuntimeException("Base64解码失败",e);
         }
     }
+
+    public static String encodeBase64String(byte[] binaryData) {
+        return encoder.encodeToString(binaryData);
+    }
+
+    public static byte[] decodeBase64(byte[] encodedText) {
+        return decoder.decode(encodedText);
+    }
 }
