@@ -17,6 +17,7 @@
         <module>CryptoMod</module>
         <module>QuartzMod</module>
         <module>QuartzMod</module>
+        <module>ZProject</module>
     </modules>
     <!-- 根模块打包类型必须为pom -->
     <packaging>pom</packaging>
