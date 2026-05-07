@@ -38,3 +38,5 @@ build/
 application-private.yml
 
 datasourceset.json
+
+javaLogs/*
