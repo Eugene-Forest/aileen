@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.aileen.mod.auth.mapper.AccountMapper">
+
+    <resultMap id="AuthAccountResultMap" type="org.aileen.mod.auth.entity.AuthAccount">
+        <id     property="id"          column="id" />
+        <result property="username"    column="username" />
+        <result property="password"    column="password" />
+        <result property="nickname"    column="nickname" />
+        <result property="email"       column="email" />
+        <result property="phone"       column="phone" />
+        <result property="avatar"      column="avatar" />
+        <result property="status"      column="status" />
+        <result property="loginIp"     column="login_ip" />
+        <result property="loginTime"   column="login_time" />
+        <result property="createTime"  column="create_time" />
+        <result property="updateTime"  column="update_time" />
+        <result property="deleted"     column="deleted" />
+    </resultMap>
+
+    <!-- 根据用户名查询未删除的账号 -->
+    <select id="selectByUsername" resultMap="AuthAccountResultMap">
+        SELECT id, username, password, nickname, email, phone, avatar,
+               status, login_ip, login_time, create_time, update_time, deleted
+          FROM auth_account
+         WHERE username = #{username}
+           AND deleted = 0
+    </select>
+
+    <!-- 更新最后登录信息 -->
+    <update id="updateLoginInfo">
+        UPDATE auth_account
+           SET login_ip   = #{loginIp},
+               login_time = #{loginTime}
+         WHERE id = #{id}
+    </update>
+
+</mapper>
