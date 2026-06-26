@@ -1,39 +1,33 @@
 package org.aileen.mod.datasource.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.aileen.mod.crypto.CryptoUnits;
 
 /**
+ * 数据源数据
+ *
  * @author Eugene-Forest
  * @date 2020/08/05
- * @description 数据源数据
  */
 @Data
+@Slf4j
 public class DataSourceData {
-    @JsonProperty("id")
-    private String Id;
-    @JsonProperty("dbid")
-    private String DBId;
-    @JsonProperty("dbname")
-    private String DBName;
-    @JsonProperty("dbtype")
-    private String DBType;
-    @JsonProperty("dbserver")
-    private String DBServer;
-    @JsonProperty("dbuser")
-    private String DBUser;
-    @JsonProperty("dbpassword")
-    private String DBPassword;
+    private String id;
+    private String dbId;
+    private String dbName;
+    private String dbType;
+    private String dbServer;
+    private String dbUser;
+    private String dbPassword;
 
     public DataSourceData() {}
 
-
-    public String getDBServer() {
-        return CryptoUnits.defaultDecrypt(DBServer);
+    public String getDbServer() {
+        return CryptoUnits.defaultDecrypt(dbServer);
     }
 
-    public String getDBPassword() {
-        return CryptoUnits.defaultDecrypt(DBPassword);
+    public String getDbPassword() {
+        return CryptoUnits.defaultDecrypt(dbPassword);
     }
 }

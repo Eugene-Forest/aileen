@@ -1,6 +1,5 @@
 package org.aileen.mod.datasource.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -11,17 +10,13 @@ import java.util.List;
 @Data
 public class AccountSet {
     /** 账套ID */
-    @JsonProperty("accountSetID")
-    private Long AccountSetId;
+    private Long accountSetId;
     /** 账套名 */
-    @JsonProperty("accountSetName")
-    private String AccountSetName;
+    private String accountSetName;
     /** 服务名 */
-    @JsonProperty("serviceName")
-    private String ServiceName;
+    private String serviceName;
     /** 是否默认 */
-    @JsonProperty("isDefault")
-    private Boolean IsDefault;
+    private boolean defaulted;
     /** 账套数据源 */
     private List<DataSourceData> data;
 }

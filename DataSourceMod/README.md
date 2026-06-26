@@ -58,7 +58,6 @@ DataSourceMod 是一个基于 Spring Boot + MyBatis 的**自定义动态多数�
 
 | 包/类 | 说明 |
 |-------|------|
-| `config/AileenDFConfig` | 配置类（当前已注释，Bean 注册由 StartRunner 接管） |
 | `dynamic/DynamicDataSource` | 继承 `AbstractRoutingDataSource`，通过 ThreadLocal 实现数据源动态路由 |
 | `enums/DBType` | 数据库类型枚举（MYSQL=0, MSSQL=1） |
 | `exceptions/` | 模块自定义异常及异常工厂 |
@@ -130,19 +129,19 @@ datasource-mod:
 {
   "accountSets": [
     {
-      "accountSetID": 1,
+      "accountSetId": 1,
       "accountSetName": "TuTor_Ali",
       "serviceName": "TuTor_Ali",
-      "isDefault": true,
+      "defaulted": true,
       "data": [
         {
           "id": "1",
-          "dbname": "Tutor_Ali",
-          "dbid": "d1",
-          "dbtype": "0",
-          "dbserver": "<RSA加密的服务器地址>",
-          "dbpassword": "<RSA加密的密码>",
-          "dbuser": "tutor"
+          "dbName": "Tutor_Ali",
+          "dbId": "d1",
+          "dbType": "0",
+          "dbServer": "<RSA加密的服务器地址>",
+          "dbPassword": "<RSA加密的密码>",
+          "dbUser": "tutor"
         }
       ]
     }
@@ -150,9 +149,9 @@ datasource-mod:
 }
 ```
 
-- `dbtype`: `0` = MySQL, `1` = SQL Server
-- `dbserver` / `dbpassword`: 支持 RSA 加密存储，运行时通过 `CryptoUnits.defaultDecrypt()` 自动解密
-- `dbid`: 对应 `logic.names` 中的逻辑数据源名称
+- `dbType`: `0` = MySQL, `1` = SQL Server
+- `dbServer` / `dbPassword`: 支持 RSA 加密存储，运行时通过 `CryptoUnits.defaultDecrypt()` 自动解密
+- `dbId`: 对应 `logic.names` 中的逻辑数据源名称
 
 ---
 
@@ -181,6 +180,32 @@ try {
 @Qualifier("sqlSessionTemplate_d1")
 private SqlSessionTemplate sqlSessionTemplateD1;
 ```
+
+---
+
+## 数据库表结构
+
+建表脚本位于: `AileenStatic/sql/datasource/datasource.sql`
+
+| 表名 | 说明 |
+|------|------|
+| `ds_account_set` | 账套表，记录账套名称、服务名、是否默认等 |
+| `ds_data_source` | 数据源配置表，记录每个账套下的数据源连接信息，通过外键关联账套 |
+
+字段命名遵循 `snake_case` 规范，与 Java 模型中的 `camelCase` 字段一一对应：
+
+| Java 字段 | 数据库列 | 说明 |
+|-----------|----------|------|
+| `accountSetId` | `id` | 账套主键 |
+| `accountSetName` | `account_set_name` | 账套名称 |
+| `serviceName` | `service_name` | 服务名称 |
+| `defaulted` | `defaulted` | 是否默认账套 |
+| `dbId` | `db_id` | 逻辑数据源标识 |
+| `dbName` | `db_name` | 数据库名称 |
+| `dbType` | `db_type` | 数据库类型 |
+| `dbServer` | `db_server` | 服务器地址（加密） |
+| `dbUser` | `db_user` | 用户名 |
+| `dbPassword` | `db_password` | 密码（加密） |
 
 ---
 

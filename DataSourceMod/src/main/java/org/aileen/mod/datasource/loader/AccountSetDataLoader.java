@@ -32,7 +32,7 @@ public class AccountSetDataLoader {
 
     public String getDefaultAccountSetName(){
         return getAccountSets().stream()
-                .filter(AccountSet::getIsDefault)
+                .filter(AccountSet::isDefaulted)
                 .map(AccountSet::getAccountSetName)
                 .findFirst()
                 .orElse(null);
@@ -45,7 +45,7 @@ public class AccountSetDataLoader {
         Map<String, DataSourceData> dataSourceDataMap = new HashMap<>();
         for(AccountSet accountSet : getAccountSets()){
             for (DataSourceData data : accountSet.getData()){
-                if(data.getDBId().equals(dbId)){
+                if(data.getDbId().equals(dbId)){
                     dataSourceDataMap.put(accountSet.getAccountSetName(), data);
                     break;
                 }

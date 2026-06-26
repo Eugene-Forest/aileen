@@ -164,10 +164,10 @@ public class DataSourceBeanDefinitionRegister {
         for (String accountSetName : dataSourceDataMap.keySet()) {
             DataSourceData dataSourceData = dataSourceDataMap.get(accountSetName);
             HikariConfig config = new HikariConfig();
-            config.setJdbcUrl(dataSourceConfigDto.getJdbcUrl(dataSourceData.getDBType(), dataSourceData.getDBServer(), dataSourceData.getDBName()));
-            config.setDriverClassName(dataSourceConfigDto.getDriverClassName(dataSourceData.getDBType()));
-            config.setUsername(dataSourceData.getDBUser());
-            config.setPassword(dataSourceData.getDBPassword());
+            config.setJdbcUrl(dataSourceConfigDto.getJdbcUrl(dataSourceData.getDbType(), dataSourceData.getDbServer(), dataSourceData.getDbName()));
+            config.setDriverClassName(dataSourceConfigDto.getDriverClassName(dataSourceData.getDbType()));
+            config.setUsername(dataSourceData.getDbUser());
+            config.setPassword(dataSourceData.getDbPassword());
             HikariDataSource dataSource = new HikariDataSource(config);
 
             targetDataSources.put(accountSetName, dataSource);
