@@ -100,16 +100,19 @@ public class DataSourceStartRunner implements BeanDefinitionRegistryPostProcesso
                     properties.put("password", password);
                 }
                 ConfigService configService = NacosFactory.createConfigService(properties);
-                String configContent = configService.getConfig(dataId, group, 5000);
-                if (StringUtils.isBlank(configContent)) {
-                    log.error("Nacos configuration not found for dataId: {}, group: {}, namespace: {}", dataId, group, namespace);
-                    DataSourceModExceptionFactory.raiseException("Nacos configuration not found");
+                try {
+                    String configContent = configService.getConfig(dataId, group, 5000);
+                    if (StringUtils.isBlank(configContent)) {
+                        log.error("Nacos configuration not found for dataId: {}, group: {}, namespace: {}", dataId, group, namespace);
+                        DataSourceModExceptionFactory.raiseException("Nacos configuration not found");
+                    }
+                    log.debug("Loading configuration from Nacos with dataId: {}, group: {}, namespace: {}", dataId, group, namespace);
+                    dataSourceSet = objectMapper.readValue(configContent, new TypeReference<DataSourceSet>() {
+                    });
+                } finally {
+                    // 主动结束 Nacos 配置监听服务
+                    configService.shutDown();
                 }
-                log.debug("Loading configuration from Nacos with dataId: {}, group: {}, namespace: {}", dataId, group, namespace);
-                dataSourceSet = objectMapper.readValue(configContent, new TypeReference<DataSourceSet>() {
-                });
-                //主动结束 Nacos 配置监听服务
-                configService.shutDown();
             } else {
                 String dataSourceFilePath = environment.getProperty(DataSourceFilePath, String.class, "classpath:datasource/datasourceset.json");
                 Resource resource = applicationContext.getResource(dataSourceFilePath);

@@ -8,6 +8,7 @@ import org.aileen.mod.datasource.model.DataSourceSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 账套资源载入
@@ -15,13 +16,13 @@ import java.util.Map;
 @Slf4j
 public class AccountSetDataLoader {
 
-    private Map<String, Map<String, DataSourceData>> allDataSourceData;
+    private final Map<String, Map<String, DataSourceData>> allDataSourceData;
 
-    private DataSourceSet dataSourceSet;
+    private final DataSourceSet dataSourceSet;
 
     public AccountSetDataLoader(DataSourceSet dataSourceSet) {
         this.dataSourceSet = dataSourceSet;
-        allDataSourceData = new HashMap<>();
+        allDataSourceData = new ConcurrentHashMap<>();
     }
 
     /** 获取账套配置 */
@@ -30,12 +31,11 @@ public class AccountSetDataLoader {
     }
 
     public String getDefaultAccountSetName(){
-        for(AccountSet accountSet : getAccountSets()){
-            if(accountSet.getIsDefault()){
-                return accountSet.getAccountSetName();
-            }
-        }
-        return null;
+        return getAccountSets().stream()
+                .filter(AccountSet::getIsDefault)
+                .map(AccountSet::getAccountSetName)
+                .findFirst()
+                .orElse(null);
     }
 
     public Map<String, DataSourceData> getDataSourceDataMap(String dbId){

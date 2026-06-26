@@ -32,10 +32,6 @@ public class DataSourceData {
     public String getDBServer() {
         return CryptoUnits.defaultDecrypt(DBServer);
     }
-//
-//    public String getDBUser() {
-//        return CryptoUnits.defaultDecrypt(DBUser);
-//    }
 
     public String getDBPassword() {
         return CryptoUnits.defaultDecrypt(DBPassword);

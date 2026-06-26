@@ -31,7 +31,7 @@ public class AileenBeanUtils {
      */
     public void registerSingleton(String beanName, Object singletonObject) {
         try {
-            log.warn("Registering singleton bean: " + beanName);
+            log.info("Registering singleton bean: {}", beanName);
             DefaultListableBeanFactory beanFactory = getBeanFactory();
             beanFactory.registerSingleton(beanName, singletonObject);
         } catch (Exception e) {

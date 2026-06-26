@@ -100,7 +100,7 @@ public class DataSourceBeanDefinitionRegister {
             log.info("-- DataSourceMod MybatisConfig init success --");
         } catch (Throwable e) {
             log.error("-- DataSourceMod MybatisConfig init error --", e);
-            throw DataSourceModExceptionFactory.raiseException("-- DataSourceMod MybatisConfig init error --");
+            DataSourceModExceptionFactory.raiseException("-- DataSourceMod MybatisConfig init error --");
         }
     }
 

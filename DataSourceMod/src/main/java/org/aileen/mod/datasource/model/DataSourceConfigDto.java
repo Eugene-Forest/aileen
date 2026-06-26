@@ -12,18 +12,21 @@ public class DataSourceConfigDto {
 
     public String getJdbcUrl(String dbType, String dbServer, String dbName) {
         DBType type = DBType.getDBType(dbType);
-        String url = null;
+        String template;
         switch (type){
             case MSSQL:{
-                url = mssql.getJdbcUrl();
+                template = mssql.getJdbcUrl();
                 break;
             }
             case MYSQL:{
-                url = mysql.getJdbcUrl();
+                template = mysql.getJdbcUrl();
                 break;
             }
+            default:
+                throw new IllegalArgumentException("Unsupported DB type: " + type);
         }
-        return url.replace(this.dbServer, dbServer).replace(this.dbName, dbName);
+        // 先替换占位符，避免 dbServer/dbName 内容互相干扰
+        return template.replace(this.dbServer, dbServer).replace(this.dbName, dbName);
     }
 
     public String getDriverClassName(String dbType) {

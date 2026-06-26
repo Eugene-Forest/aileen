@@ -4,7 +4,7 @@ import java.text.MessageFormat;
 
 public class DataSourceModExceptionFactory {
 
-    public static DataSourceModException raiseException(String message) throws DataSourceModException {
+    public static void raiseException(String message) {
         throw new DataSourceModException(message);
     }
 
@@ -12,14 +12,12 @@ public class DataSourceModExceptionFactory {
      * 抛出异常
      * @param pattern  {} 作为占位符的信息模板
      * @param args 替换占位符的参数
-     * @return
-     * @throws DataSourceModException
      */
-    public static DataSourceModException raiseException(String pattern, Object... args) throws DataSourceModException {
+    public static void raiseException(String pattern, Object... args) {
         throw new DataSourceModException(MessageFormat.format(pattern, args));
     }
 
-    public static DataSourceModException raiseException(Throwable cause) throws DataSourceModException {
+    public static void raiseException(Throwable cause) {
         throw new DataSourceModException(cause);
     }
 
